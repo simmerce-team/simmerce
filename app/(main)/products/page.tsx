@@ -1,3 +1,4 @@
+import { fetchFeaturedProducts } from "@/actions/products";
 import { PageHeader } from "@/components/page-header";
 import { ProductList } from "@/components/product/product-list";
 import { Button } from "@/components/ui/button";
@@ -9,9 +10,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { products } from "@/lib/mock-data";
 
-export default function ProductsPage() {
+export default async function ProductsPage() {
+  const products = await fetchFeaturedProducts();
   return (
     <div className="min-h-screen bg-slate-50/30">
       {/* Page Header */}

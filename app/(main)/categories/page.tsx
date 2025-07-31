@@ -1,9 +1,11 @@
+import { fetchCategories } from '@/actions/categories';
 import { PageHeader } from '@/components/page-header';
-import { categories } from '@/lib/mock-data';
+import { Images } from '@/utils/constant';
 import Image from 'next/image';
 import Link from 'next/link';
 
-export default function CategoriesPage() {
+export default async function CategoriesPage() {
+  const categories = await fetchCategories();
   return (
     <div>
       <PageHeader 
@@ -20,12 +22,12 @@ export default function CategoriesPage() {
           {categories.map((category) => (
             <Link
               key={category.id}
-              href={`/categories/${category.slug}`}
+              href={`/categories/${category.name.toLowerCase().replace(' ', '-')}`}
               className="group flex flex-col items-center p-6 bg-white rounded-xl border border-slate-100 hover:border-slate-200 hover:shadow-lg transition-all duration-300"
             >
               <div className="w-16 h-16 mb-4 bg-slate-50 rounded-2xl flex items-center justify-center group-hover:bg-red-50 transition-colors">
                 <Image
-                  src={category.image}
+                  src={category.icon_url || Images.placeholder}
                   alt={category.name}
                   width={40}
                   height={40}

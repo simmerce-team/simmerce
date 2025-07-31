@@ -11,7 +11,6 @@ import {
   CommandSeparator
 } from "@/components/ui/command"
 import { Input } from "@/components/ui/input"
-import { categories, cities, popularSearches } from "@/lib/mock-data"
 import { MapPin, Package, Search, TrendingUp } from "lucide-react"
 import { useEffect, useRef, useState } from 'react'
 
@@ -26,6 +25,85 @@ interface SearchCategory {
     verified?: boolean
   }[]
 }
+
+const categories: any[] = [
+  {
+    id: 1,
+    name: "Industrial Motors",
+    href: "/products/industrial-motors",
+    type: 'product',
+    location: "Mumbai"
+  },
+  {
+    id: 2,
+    name: "LED Light Panels",
+    href: "/products/led-lights",
+    type: 'product',
+    location: "Delhi"
+  },
+  {
+    id: 3,
+    name: "Cotton Fabric Rolls",
+    href: "/products/cotton-fabric",
+    type: 'product',
+    location: "Ahmedabad"
+  },
+  {
+    id: 4,
+    name: "Steel Pipes",
+    href: "/products/steel-pipes",
+    type: 'product',
+    location: "Chennai"
+  },
+  {
+    id: 5,
+    name: "PLC Controllers",
+    href: "/products/plc-controllers",
+    type: 'product',
+    location: "Bangalore"
+  },
+];
+
+const cities: any[] = [
+  {
+    id: 1,
+    name: "Mumbai",
+    href: "/cities/mumbai",
+    type: 'city'
+  },
+  {
+    id: 2,
+    name: "Delhi",
+    href: "/cities/delhi",
+    type: 'city'
+  },
+  {
+    id: 3,
+    name: "Ahmedabad",
+    href: "/cities/ahmedabad",
+    type: 'city'
+  },
+  {
+    id: 4,
+    name: "Chennai",
+    href: "/cities/chennai",
+    type: 'city'
+  },
+  {
+    id: 5,
+    name: "Bangalore",
+    href: "/cities/bangalore",
+    type: 'city'
+  },
+];
+
+const popularSearches: any[] = [
+  "Industrial Motors",
+  "LED Light Panels",
+  "Cotton Fabric Rolls",
+  "Steel Pipes",
+  "PLC Controllers",
+];
 
 // Enhanced search categories with more B2B-focused content
 const searchCategories: SearchCategory[] = [

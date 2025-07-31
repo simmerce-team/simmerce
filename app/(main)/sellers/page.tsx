@@ -1,86 +1,21 @@
+import { getBusinesses } from "@/actions/business";
 import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Star } from "lucide-react";
+import { MapPin } from "lucide-react";
 import Link from "next/link";
 
-// Mock sellers data
-const sellers = [
-  {
-    id: "1",
-    name: "AquaTech Industries",
-    rating: 4.8,
-    totalProducts: 156,
-    verified: true,
-    description: "Leading B2B manufacturer of premium stainless steel products for corporate and industrial use.",
-    location: "Mumbai, Maharashtra",
-    businessType: "Manufacturer & Exporter",
-    categories: ["Industrial Supplies", "Corporate Gifting"],
-    avatar: "A"
-  },
-  {
-    id: "2",
-    name: "TechElectro Solutions",
-    rating: 4.7,
-    totalProducts: 234,
-    verified: true,
-    description: "Specialized in electronic components and industrial automation solutions for B2B clients.",
-    location: "Bangalore, Karnataka",
-    businessType: "Distributor & Supplier",
-    categories: ["Electronics", "Automation"],
-    avatar: "T"
-  },
-  {
-    id: "3",
-    name: "Textile World Enterprises",
-    rating: 4.6,
-    totalProducts: 189,
-    verified: true,
-    description: "Premium textile manufacturer serving fashion brands and corporate clients with bulk orders.",
-    location: "Surat, Gujarat",
-    businessType: "Manufacturer",
-    categories: ["Textiles", "Fabrics"],
-    avatar: "T"
-  },
-  {
-    id: "4",
-    name: "ChemPro Industries",
-    rating: 4.5,
-    totalProducts: 98,
-    verified: true,
-    description: "Industrial chemicals and raw materials supplier for manufacturing and processing industries.",
-    location: "Pune, Maharashtra",
-    businessType: "Supplier & Distributor",
-    categories: ["Chemicals", "Raw Materials"],
-    avatar: "C"
-  },
-  {
-    id: "5",
-    name: "MachineTech Works",
-    rating: 4.9,
-    totalProducts: 67,
-    verified: true,
-    description: "Heavy machinery and industrial equipment manufacturer for construction and manufacturing sectors.",
-    location: "Chennai, Tamil Nadu",
-    businessType: "Manufacturer",
-    categories: ["Machinery", "Equipment"],
-    avatar: "M"
-  },
-  {
-    id: "6",
-    name: "BuildMat Suppliers",
-    rating: 4.4,
-    totalProducts: 312,
-    verified: true,
-    description: "Construction materials and building supplies for large-scale projects and contractors.",
-    location: "Delhi, NCR",
-    businessType: "Supplier & Distributor",
-    categories: ["Construction", "Building Materials"],
-    avatar: "B"
-  }
-];
+export default async function SellersPage() {
+  const businesses = await getBusinesses();
 
-export default function SellersPage() {
+  if (!businesses) {
+    return (
+      <div className="container mx-auto px-6 py-16 max-w-7xl">
+        <p className="text-center text-slate-600">No suppliers found.</p>
+      </div>
+    );
+  }
+
   return (
     <div>
       <PageHeader
@@ -94,7 +29,7 @@ export default function SellersPage() {
       
       <div className="container mx-auto px-6 py-16 max-w-7xl">
         {/* Stats Section */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
+        {/* <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
           <div className="text-center">
             <div className="text-3xl font-semibold text-slate-800 mb-1">500+</div>
             <div className="text-sm text-slate-600">Verified Suppliers</div>
@@ -111,11 +46,11 @@ export default function SellersPage() {
             <div className="text-3xl font-semibold text-slate-800 mb-1">95%</div>
             <div className="text-sm text-slate-600">Response Rate</div>
           </div>
-        </div>
+        </div> */}
 
         {/* Suppliers Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {sellers.map((seller) => (
+          {businesses.map((seller) => (
             <Link
               key={seller.id}
               href={`/sellers/${seller.id}`}
@@ -125,7 +60,11 @@ export default function SellersPage() {
                 {/* Header */}
                 <div className="flex items-start gap-4 mb-4">
                   <div className="w-14 h-14 rounded-xl bg-red-50 flex items-center justify-center text-lg font-semibold text-red-600 border border-red-100">
-                    {seller.avatar}
+                    {seller.logo_url ? (
+                      <img src={seller.logo_url} alt={seller.name} className="w-full h-full object-cover" />
+                    ) : (
+                      seller.name.charAt(0).toUpperCase()
+                    )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
@@ -138,11 +77,11 @@ export default function SellersPage() {
                         </Badge>
                       )}
                     </div>
-                    <div className="flex items-center text-sm text-slate-600 mb-2">
-                      <Star className="w-4 h-4 text-yellow-400 fill-current mr-1" />
-                      <span>{seller.rating}</span>
-                      <span className="mx-1">•</span>
-                      <span>{seller.totalProducts} products</span>
+                    <div className="flex items-center text-xs text-slate-600 mb-2">
+                      {/* <Star className="w-4 h-4 text-yellow-400 fill-current mr-1" /> */}
+                      {/* <span>{seller.rating}</span>
+                      <span className="mx-1">•</span> */}
+                      <span>{seller.gst_number ?? 'GST Not Registered'}</span>
                     </div>
                     <div className="flex items-center text-sm text-slate-500">
                       <MapPin className="w-3 h-3 mr-1" />
@@ -153,29 +92,8 @@ export default function SellersPage() {
 
                 {/* Description */}
                 <p className="text-sm text-slate-600 mb-4 line-clamp-2 leading-relaxed">
-                  {seller.description}
+                  {seller.description?.slice(0, 100)}
                 </p>
-
-                {/* Categories */}
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {seller.categories.slice(0, 2).map((category, index) => (
-                    <Badge
-                      key={index}
-                      variant="outline"
-                      className="border-slate-200 text-slate-600 text-xs"
-                    >
-                      {category}
-                    </Badge>
-                  ))}
-                  {seller.categories.length > 2 && (
-                    <Badge
-                      variant="outline"
-                      className="border-slate-200 text-slate-500 text-xs"
-                    >
-                      +{seller.categories.length - 2}
-                    </Badge>
-                  )}
-                </div>
 
                 {/* Business Type */}
                 <div className="text-xs text-slate-500 mb-4">

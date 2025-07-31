@@ -1,8 +1,10 @@
+import { fetchCityWithBusinessCount } from '@/actions/cities';
 import { PageHeader } from '@/components/page-header';
-import { cities } from '@/lib/mock-data';
 import Link from 'next/link';
 
-export default function CityPage() {
+export default async function CityPage() {
+  const cities = await fetchCityWithBusinessCount();
+
   return (
     <div>
       <PageHeader 
@@ -19,7 +21,7 @@ export default function CityPage() {
           {cities.map((city) => (
             <Link
               key={city.id}
-              href={`/cities/${city.slug}`}
+              href={`/cities/${city.name.toLowerCase().replace(/\s+/g, '-')}`}
               className="group block p-6 bg-white rounded-xl border border-slate-100 hover:border-slate-200 hover:shadow-lg transition-all duration-300"
             >
               <div className="flex justify-between items-start">
@@ -28,7 +30,7 @@ export default function CityPage() {
                     {city.name}
                   </h3>
                   <p className="text-slate-600">
-                    {city.businessCount.toLocaleString()} Businesses
+                    {city.businessCount ? city.businessCount + " Businesses" : "No Businesses"}
                   </p>
                 </div>
                 <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-red-50 text-red-700 border border-red-100 group-hover:bg-red-100 transition-colors">

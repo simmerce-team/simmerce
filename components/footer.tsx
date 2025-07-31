@@ -58,11 +58,11 @@ const defaultSections = [
 ];
 
 const defaultSocialLinks = [
-  { icon: <FaInstagram className="size-5" />, href: "https://www.instagram.com/simmerce", label: "Instagram" },
-  { icon: <FaFacebook className="size-5" />, href: "https://www.facebook.com/simmerce", label: "Facebook" },
-  { icon: <FaTwitter className="size-5" />, href: "https://twitter.com/simmerce", label: "Twitter" },
-  { icon: <FaLinkedin className="size-5" />, href: "https://www.linkedin.com/company/simmerce", label: "LinkedIn" },
-  { icon: <FaYoutube className="size-5" />, href: "https://www.youtube.com/simmerce", label: "YouTube" },
+  { icon: <FaInstagram className="size-5" />, href: "https://www.instagram.com/getsimmerce", label: "Instagram" },
+  { icon: <FaFacebook className="size-5" />, href: "https://www.facebook.com/getsimmerce", label: "Facebook" },
+  { icon: <FaTwitter className="size-5" />, href: "https://twitter.com/getsimmerce", label: "Twitter" },
+  { icon: <FaLinkedin className="size-5" />, href: "https://www.linkedin.com/company/getsimmerce", label: "LinkedIn" },
+  { icon: <FaYoutube className="size-5" />, href: "https://www.youtube.com/getsimmerce", label: "YouTube" },
 ];
 
 export const Footer = ({

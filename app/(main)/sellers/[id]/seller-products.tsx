@@ -1,7 +1,7 @@
 'use client';
 
+import { Product } from '@/actions/products';
 import { ProductCard } from '@/components/product/product-card';
-import { Product } from '@/lib/mock-data';
 
 interface SellerProductsProps {
   products: Product[];

@@ -1,90 +1,104 @@
+import { fetchCategories } from '@/actions/categories';
+import { fetchProductsByCategory } from '@/actions/products';
 import { PageHeader } from '@/components/page-header';
 import { ProductCard } from '@/components/product/product-card';
-import { categories, products } from '@/lib/mock-data';
+import { Images } from '@/utils/constant';
 import Image from 'next/image';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
-import { use } from 'react';
 
 type Params = Promise<{ slug: string }>
 
-export default function CategoryPage({ params }: { params: Params }) {
-  const paramsData = use(params)
-  const category = categories.find(cat => cat.slug === paramsData.slug);
+export default async function CategoryPage({ 
+  params 
+}: { 
+  params: Params 
+}) {
+  const paramsData = await(params);
   
-  if (!category) {
-    notFound();
-  }
+  // Format the category name for display
+  const categoryName = paramsData.slug
+    .split('-')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
   
-  const categoryProducts = products.filter(p => p.category === category.slug);
+  // Fetch data in parallel
+  const [categories, categoryProducts] = await Promise.all([
+    fetchCategories(),
+    fetchProductsByCategory(paramsData.slug)
+  ]);
+
+  // Find the current category for breadcrumbs
+  const currentCategory = categories.find(cat => 
+    cat.name.toLowerCase().replace(/\s+/g, '-') === paramsData.slug
+  );
 
   return (
     <div>
       <PageHeader 
-        title={category.name}
-        description={`Browse ${category.name} products from trusted suppliers`}
+        title={currentCategory?.name || categoryName}
+        description={`Browse ${currentCategory?.name || categoryName} products from trusted suppliers`}
         breadcrumbs={[
           { name: 'Home', href: '/' },
           { name: 'Categories', href: '/categories' },
-          { name: category.name, href: `/categories/${category.slug}` },
+          { 
+            name: currentCategory?.name || categoryName, 
+            href: `/categories/${paramsData.slug}` 
+          },
         ]}
       />
       
-      <div className="container mx-auto px-6 md:py-16 max-w-7xl">
+      <div className="container mx-auto px-4 py-12">
         <div className="mb-12">
           <h2 className="text-2xl font-medium text-slate-800 mb-8 tracking-tight">
-            {category.name} Products
+            {currentCategory?.name || categoryName} Products
           </h2>
           
           {categoryProducts.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {categoryProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
             </div>
           ) : (
-            <div className="text-center py-16 bg-slate-50/30 rounded-2xl">
-              <div className="max-w-md mx-auto">
-                <p className="text-slate-600 text-lg mb-6">No products found in this category.</p>
-                <Link 
-                  href="/categories" 
-                  className="inline-flex items-center px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
-                >
-                  Browse all categories
-                </Link>
-              </div>
+            <div className="text-center py-12 bg-slate-50 rounded-xl">
+              <h3 className="text-lg font-medium text-slate-700 mb-2">No products found</h3>
+              <p className="text-slate-500">We couldn't find any products in this category yet.</p>
             </div>
           )}
         </div>
-        
-        <div className="mt-16 border-t border-slate-200 pt-12">
-          <h3 className="text-xl font-medium text-slate-800 mb-8 tracking-tight">
-            Looking for something else?
+
+        {/* Related Categories */}
+        <div className="mb-12">
+          <h3 className="text-xl font-medium text-slate-800 mb-6">
+            Explore Related Categories
           </h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6">
             {categories
-              .filter(cat => cat.slug !== category.slug)
+              .filter(cat => cat.name.toLowerCase().replace(/\s+/g, '-') !== paramsData.slug)
               .slice(0, 6)
-              .map((relatedCategory) => (
-                <Link
-                  key={relatedCategory.id}
-                  href={`/categories/${relatedCategory.slug}`}
-                  className="group flex flex-col items-center p-5 hover:bg-slate-50/50 rounded-xl transition-all duration-200 border border-slate-100 hover:border-slate-200"
-                >
-                  <div className="w-12 h-12 mb-3 bg-slate-50 rounded-2xl flex items-center justify-center group-hover:bg-red-50 transition-colors">
-                    <Image
-                      src={relatedCategory.image}
-                      alt={relatedCategory.name}
-                      width={24}
-                      height={24}
-                      className="text-slate-400"
-                    />
-                  </div>
-                  <span className="text-sm font-medium text-slate-700 text-center group-hover:text-red-600 transition-colors">
-                    {relatedCategory.name}
-                  </span>
-                </Link>
-              ))}
+              .map((relatedCategory) => {
+                const categorySlug = relatedCategory.name.toLowerCase().replace(/\s+/g, '-');
+                return (
+                  <Link
+                    key={relatedCategory.id}
+                    href={`/categories/${categorySlug}`}
+                    className="group flex flex-col items-center p-5 hover:bg-slate-50/50 rounded-xl transition-all duration-200 border border-slate-100 hover:border-slate-200"
+                  >
+                    <div className="w-12 h-12 mb-3 bg-slate-50 rounded-2xl flex items-center justify-center group-hover:bg-red-50 transition-colors">
+                      <Image
+                        src={relatedCategory.icon_url || Images.placeholder}
+                        alt={relatedCategory.name}
+                        width={24}
+                        height={24}
+                        className="text-slate-400"
+                      />
+                    </div>
+                    <span className="text-sm font-medium text-slate-700 text-center group-hover:text-red-600 transition-colors">
+                      {relatedCategory.name}
+                    </span>
+                  </Link>
+                );
+              })}
           </div>
         </div>
       </div>
