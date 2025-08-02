@@ -1,4 +1,4 @@
-import { InfoIcon, Mail, UserIcon } from "lucide-react";
+import { InfoIcon, Mail, Menu, UserIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -44,8 +44,8 @@ export default function Header() {
 
             {/* Right side */}
             <div className="hidden md:flex items-center gap-6 text-xs text-slate-600">
-              <div className="flex items-center gap-1.5">
-                <InfoIcon className="w-3 h-3 text-red-500" />
+              <div className="flex items-center gap-1.5 text-red-500 font-medium">
+                <InfoIcon className="w-3 h-3" />
                 <span>Simmerce is now in Beta 🚀</span>
               </div>
             </div>
@@ -66,31 +66,7 @@ export default function Header() {
                   variant="ghost"
                   size="icon"
                 >
-                  <svg
-                    className="pointer-events-none"
-                    width={16}
-                    height={16}
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M4 12L20 12"
-                      className="origin-center -translate-y-[7px] transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.1)] group-aria-expanded:translate-x-0 group-aria-expanded:translate-y-0 group-aria-expanded:rotate-[315deg]"
-                    />
-                    <path
-                      d="M4 12H20"
-                      className="origin-center transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.8)] group-aria-expanded:rotate-45"
-                    />
-                    <path
-                      d="M4 12H20"
-                      className="origin-center translate-y-[7px] transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.1)] group-aria-expanded:translate-y-0 group-aria-expanded:rotate-[135deg]"
-                    />
-                  </svg>
+                  <Menu/>
                 </Button>
               </PopoverTrigger>
               <PopoverContent

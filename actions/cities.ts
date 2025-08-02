@@ -7,7 +7,6 @@ export interface City {
   name: string;
   state: string | null;
   country: string;
-  pincode: string | null;
   created_at: string;
 }
 

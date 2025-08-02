@@ -1,7 +1,8 @@
 import { Toaster } from "@/components/ui/sonner";
-import type { Metadata } from "next";
+import { QueryClientProviders } from "@/providers/query-client-providers";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { defaultMetadata } from "./metadata";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,10 +14,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Simmerce",
-  description: "Simmerce - B2B Marketplace for Businesses",
-};
+export const metadata = defaultMetadata;
 
 export default function RootLayout({
   children,
@@ -28,8 +26,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
-        <Toaster />
+        <QueryClientProviders>
+          {children}
+          <Toaster />
+        </QueryClientProviders>
       </body>
     </html>
   );

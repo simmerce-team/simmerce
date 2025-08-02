@@ -4,10 +4,32 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Images } from "@/utils/constant";
 import { formatRelative, subDays } from "date-fns";
 import { MessageCircle } from "lucide-react";
+import { Metadata, ResolvingMetadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 
 type Params = Promise<{ id: string }>;
+
+export async function generateMetadata(
+  { params }: { params: Params; },
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  // read route params
+  const { id } = await params
+ 
+  // fetch data
+  const product = await getProductById(id)
+ 
+  // optionally access and extend (rather than replace) parent metadata
+  const previousImages = (await parent).openGraph?.images || []
+ 
+  return {
+    title: product?.name,
+    openGraph: {
+      images: [product?.images?.[0]?.url || Images.placeholder, ...previousImages],
+    },
+  }
+}
 
 const ProductDetailPage = async ({ params }: { params: Params }) => {
   const paramsData = await params;
@@ -25,7 +47,7 @@ const ProductDetailPage = async ({ params }: { params: Params }) => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Left Column - Product Image (Smaller) */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden sticky top-8">
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden sticky top-36">
               <div className="aspect-square relative p-8 bg-gradient-to-br from-slate-50/50 to-slate-100/30">
                 <Image
                   src={product?.images?.[0]?.url || Images.placeholder}
@@ -89,18 +111,9 @@ const ProductDetailPage = async ({ params }: { params: Params }) => {
                 </div>
                 
                 {/* Min Order Quantity */}
-                <div className="bg-slate-50 rounded-lg p-4">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <p className="font-medium text-slate-800">Minimum Order Quantity</p>
-                      <p className="text-sm text-slate-600">Start your bulk order today</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-xl font-semibold text-slate-900">{product.moq.toLocaleString()}</p>
-                      <p className="text-sm text-slate-600">{product.unit}s</p>
-                    </div>
-                  </div>
-                </div>
+              <p className="text-slate-800">
+                Minimum Order Quantity: <span className="font-semibold">{product.moq.toLocaleString()} {product.unit}</span>
+              </p>
               </div>
 
               {/* Action Buttons */}
@@ -117,9 +130,12 @@ const ProductDetailPage = async ({ params }: { params: Params }) => {
             </Card>
 
             {/* Seller Info */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-8">
-              <h3 className="font-medium text-lg text-slate-800 mb-6 tracking-tight">Seller Information</h3>
-              <div className="flex items-center justify-between">
+            <Card>
+              <CardHeader>
+                <CardTitle>Seller Information</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
                   <div className="w-14 h-14 bg-red-50 rounded-full flex items-center justify-center">
                     <span className="font-semibold text-red-600 text-lg">
@@ -137,15 +153,20 @@ const ProductDetailPage = async ({ params }: { params: Params }) => {
                   </Button>
                 </Link>
               </div>
-            </div>
+              </CardContent>
+            </Card>
 
             {/* Product Details */}
-              <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-8">
-                <h2 className="text-xl font-medium text-slate-800 mb-6 tracking-tight">Product Details</h2>
-                <p className="text-slate-600 leading-relaxed mb-6">
-                  {product?.description}
-                </p>  
-              </div>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Product Details</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-slate-600">
+                    {product?.description}
+                  </p>  
+                </CardContent>
+              </Card>
 
          
           </div>
