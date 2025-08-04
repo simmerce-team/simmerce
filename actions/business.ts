@@ -21,7 +21,6 @@ export interface Business {
   city?: {
     id: string;
     name: string;
-    state: string | null;
   } | null;
   business_type?: {
     id: string;
@@ -47,7 +46,7 @@ export async function getBusinessById(id: string): Promise<Business | null> {
     .from('businesses')
     .select(`
       *,
-      city:city_id (id, name, state),
+      city:city_id (id, name),
       business_type:business_type_id (id, name)
     `)
     .eq('id', id)
@@ -112,7 +111,7 @@ export async function getBusinesses(limit: number = 8): Promise<Businesses[] | n
     .from('businesses')
     .select(`
       *,
-      city:city_id (id, name, state),
+      city:city_id (id, name),
       business_type:business_type_id (id, name)
     `)
     .order('created_at', { ascending: false })
@@ -129,4 +128,3 @@ export async function getBusinesses(limit: number = 8): Promise<Businesses[] | n
     location: business.city ? `${business.city.name}${business.city.state ? `, ${business.city.state}` : ''}` : 'Location not specified',
   }));
 }
-

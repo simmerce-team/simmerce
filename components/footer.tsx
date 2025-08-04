@@ -58,11 +58,11 @@ const defaultSections = [
 ];
 
 const defaultSocialLinks = [
-  { icon: <FaInstagram className="size-5" />, href: "https://www.instagram.com/getsimmerce", label: "Instagram" },
-  { icon: <FaFacebook className="size-5" />, href: "https://www.facebook.com/getsimmerce", label: "Facebook" },
-  { icon: <FaTwitter className="size-5" />, href: "https://twitter.com/getsimmerce", label: "Twitter" },
-  { icon: <FaLinkedin className="size-5" />, href: "https://www.linkedin.com/company/getsimmerce", label: "LinkedIn" },
-  { icon: <FaYoutube className="size-5" />, href: "https://www.youtube.com/getsimmerce", label: "YouTube" },
+  { icon: <FaInstagram className="size-5" />, href: "https://www.instagram.com/gosimmerce", label: "Instagram" },
+  { icon: <FaFacebook className="size-5" />, href: "https://www.facebook.com/gosimmerce", label: "Facebook" },
+  { icon: <FaTwitter className="size-5" />, href: "https://twitter.com/gosimmerce", label: "Twitter" },
+  { icon: <FaLinkedin className="size-5" />, href: "https://www.linkedin.com/company/gosimmerce", label: "LinkedIn" },
+  { icon: <FaYoutube className="size-5" />, href: "https://www.youtube.com/gosimmerce", label: "YouTube" },
 ];
 
 export const Footer = ({
@@ -79,10 +79,10 @@ export const Footer = ({
             {/* Logo */}
             <div className="flex items-center gap-3 lg:justify-start">
                 <img
-                  src={Images.logo512}
+                  src={Images.logo}
                   alt="Simmerce"
                   title="Simmerce"
-                  className="h-10 rounded-lg shadow-sm"
+                  className="h-10 bg-slate-800 rounded-lg shadow-sm"
                 />
               <h2 className="text-xl font-medium text-slate-800 tracking-tight">Simmerce</h2>
             </div>

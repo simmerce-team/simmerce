@@ -47,7 +47,7 @@ export function CitiesSection() {
               <Link
                 key={city.id}
                 href={`/cities/${city.name.toLowerCase().replace(' ', '-')}`}
-                className="block p-3 text-center bg-white border border-slate-200 rounded-lg hover:bg-red-50 hover:border-red-100 transition-colors"
+                className="block p-3 text-center bg-white border border-slate-200 rounded-lg hover:bg-accent hover:border-accent transition-colors"
               >
                 <span className="text-sm font-medium text-slate-800">
                   {city.name}

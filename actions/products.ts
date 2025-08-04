@@ -17,9 +17,7 @@ export interface Product {
   unit: string;
   moq: number;
   stock_quantity: number;
-  is_featured: boolean;
-  view_count: number;
-  enquiry_count: number;
+  address: string | null;
   created_at: string;
   images: ProductImage[];
   business: {
@@ -40,7 +38,7 @@ export async function fetchFeaturedProducts(limit: number = 8): Promise<Product[
     .from('products')
     .select(`
       *,
-      business:businesses(id, name, logo_url),
+      business:businesses(id, name, logo_url, address),
       category:categories(id, name),
       images:product_images(id, url, alt_text, is_primary)
     `)
@@ -59,6 +57,7 @@ export async function fetchFeaturedProducts(limit: number = 8): Promise<Product[
     price: Number(product.price),
     images: product.images || [],
     category: product.category || null,
+    address: product.business.address || null,
   }));
 }
 
@@ -96,7 +95,7 @@ export async function fetchProductsByLocation(location: string, limit: number = 
     .from('products')
     .select(`
       *,
-      business:businesses(id, name, logo_url, is_verified),
+      business:businesses(id, name, logo_url, is_verified, address),
       category:categories(id, name),
       images:product_images(id, url, alt_text, is_primary)
     `)
@@ -116,6 +115,7 @@ export async function fetchProductsByLocation(location: string, limit: number = 
     price: Number(product.price),
     images: product.images || [],
     category: product.category || null,
+    address: product.business.address || null,
   }));
 }
 
@@ -126,7 +126,7 @@ export async function fetchProductsByCategory(category: string, limit: number = 
     .from('products')
     .select(`
       *,
-      business:businesses(id, name, logo_url, is_verified),
+      business:businesses(id, name, logo_url, is_verified, address),
       category:categories(id, name),
       images:product_images(id, url, alt_text, is_primary)
     `)
@@ -146,5 +146,6 @@ export async function fetchProductsByCategory(category: string, limit: number = 
     price: Number(product.price),
     images: product.images || [],
     category: product.category || null,
+    address: product.business.address || null,
   }));
 }

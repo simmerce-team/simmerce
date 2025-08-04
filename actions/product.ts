@@ -8,8 +8,6 @@ export interface Product {
   unit: string;
   moq: number;
   stock_quantity: number;
-  is_featured: boolean;
-  view_count: number;
   created_at: string;
   updated_at: string;
   business_id: string;
@@ -31,7 +29,15 @@ export interface Business {
   name: string;
   logo_url: string | null;
   is_verified: boolean;
-  description: string | null;
+  address: string | null;
+  city?: {
+    id: string;
+    name: string;
+    state?: {
+      id: string;
+      name: string;
+    };
+  };
   created_at: string;
 }
 
@@ -48,7 +54,15 @@ export async function getProductById(id: string): Promise<Product | null> {
     .from('products')
     .select(`
       *,
-      business:businesses(id, name, logo_url, is_verified, description, created_at),
+      business:businesses(
+        id, 
+        name, 
+        logo_url, 
+        is_verified, 
+        address, 
+        created_at,
+        city:cities(id, name, state:states(id, name))
+      ),
       category:categories(id, name, icon_url),
       images:product_images(id, url, alt_text, is_primary, display_order)
     `)
@@ -63,17 +77,24 @@ export async function getProductById(id: string): Promise<Product | null> {
 
   if (!product) return null;
 
-  // Transform the data to match our Product interface
+  // Format the address with city and state
+  const formattedBusiness = product.business ? {
+    ...product.business,
+    logo: product.business.logo_url,
+    address: [
+      product.business.address,
+      product.business.city?.name,
+      product.business.city?.state?.name
+    ].filter(Boolean).join(', '),
+    created_at: product.business.created_at
+  } : null;
+
   return {
     ...product,
     price: Number(product.price),
     images: product.images || [],
     category: product.category || null,
-    business: product.business ? {
-      ...product.business,
-      logo: product.business.logo_url
-    } : null,
-    description: product.description || '',
+    business: formattedBusiness,
   };
 }
 

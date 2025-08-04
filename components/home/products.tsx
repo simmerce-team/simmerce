@@ -30,7 +30,7 @@ export function ProductsSection() {
 
   if (loading) {
     return (
-      <div className="py-16 bg-white">
+      <div className="py-4 bg-white">
         <div className="container mx-auto px-6 max-w-7xl">
           <SectionHeader
             title="Featured Products"
@@ -49,7 +49,7 @@ export function ProductsSection() {
 
   if (error) {
     return (
-      <div className="py-16 bg-white">
+      <div className="py-4 bg-white">
         <div className="container mx-auto px-6 max-w-7xl text-center">
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg inline-block">
             {error}
@@ -60,7 +60,7 @@ export function ProductsSection() {
   }
 
   return (
-    <div className="py-16 bg-white">
+    <div className="py-4 bg-white">
       <div className="container mx-auto px-6 max-w-7xl">
         <SectionHeader
           title="Featured Products"
@@ -70,7 +70,7 @@ export function ProductsSection() {
         {products.length > 0 ? (
           <ProductList products={products} />
         ) : (
-          <div className="text-center py-12">
+          <div className="text-center py-4">
             <p className="text-slate-500">No featured products available at the moment.</p>
           </div>
         )}

@@ -22,8 +22,7 @@ export function ProductCard({ product, className = '' }: ProductCardProps) {
     images = [],
     business,
     category,
-    view_count = 0,
-    enquiry_count = 0
+    address,
   } = product;
 
   const primaryImage = images.find(img => img.is_primary) || images[0];
@@ -100,11 +99,10 @@ export function ProductCard({ product, className = '' }: ProductCardProps) {
                 </div>
               </div>
               
-              {/* Stats */}
-              <div className="flex items-center justify-between pt-2 text-xs text-slate-500 border-t border-slate-100">
-                <span>{view_count.toLocaleString()} views</span>
-                <span>{enquiry_count.toLocaleString()} enquiries</span>
-              </div>
+              {/* Address */}
+             {address && <div className="pt-2 text-xs text-slate-500 border-t border-slate-100 overflow-ellipsis">
+                <span>{address}</span>
+              </div>}
             </div>
         </div>
       </CardContent>

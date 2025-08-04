@@ -15,7 +15,7 @@ function CategoryCard({ category }: CategoryCardProps) {
       href={`/categories/${category.name.toLowerCase().replace(' ', '-')}`}
       className="group flex flex-col items-center p-6 bg-white hover:bg-slate-50/50 rounded-xl transition-all duration-200 border border-slate-100 hover:border-slate-200"
     >
-      <div className="w-14 h-14 mb-4 bg-slate-50 rounded-2xl flex items-center justify-center group-hover:bg-red-50 transition-colors">
+      <div className="w-14 h-14 mb-4 bg-slate-50 rounded-2xl flex items-center justify-center group-hover:bg-accent transition-colors">
         {category.icon_url ? (
           <Image
             src={category.icon_url}
@@ -30,7 +30,7 @@ function CategoryCard({ category }: CategoryCardProps) {
           </div>
         )}
       </div>
-      <span className="text-sm font-medium text-slate-700 text-center group-hover:text-red-600 transition-colors">
+      <span className="text-sm font-medium text-slate-700 text-center group-hover:text-accent transition-colors">
         {category.name}
       </span>
     </Link>
