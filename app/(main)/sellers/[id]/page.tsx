@@ -48,8 +48,7 @@ export default async function SellerProfilePage({ params }: { params: Params }) 
     totalProducts: stats?.total_products || 0,
     rating: stats?.avg_rating ? Number(stats.avg_rating).toFixed(1) : 'N/A',
     businessType: business.business_type ? [business.business_type.name] : [],
-    location: business.city ? `${business.city.name}${business.city.state ? `, ${business.city.state}` : ''}` : 'N/A',
-    // Default values for optional fields
+    location: business.city ? `${business.city.name}${business.city.state?.name ? `, ${business.city.state.name}` : ''}` : 'N/A',
     employees: business.employees || 'N/A',
     certifications: business.certifications || ['GST Registered'],
     categories: business.categories || []
