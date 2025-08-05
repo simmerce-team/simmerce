@@ -41,7 +41,6 @@ export function MegaMenu() {
     loadCategories();
   }, []);
 
-console.log(categories);
 
   return (
     <div className="hidden lg:flex">

@@ -1,4 +1,4 @@
-import { InfoIcon, Mail, Menu, UserIcon } from "lucide-react";
+import { Menu, UserIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -26,33 +26,6 @@ const mobileNavigationLinks = [
 export default function Header() {
   return (
     <div className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/60">
-      {/* Top Bar with Trust Indicators */}
-      <div className="bg-slate-50/50 border-b border-slate-100 hidden md:block">
-        <div className="max-w-7xl mx-auto px-6 md:px-8">
-          <div className="flex items-center justify-between h-10">
-            {/* Left side - Contact info */}
-            <div className="hidden md:flex items-center gap-6 text-xs text-slate-600">
-              {/* <div className="flex items-center gap-1.5">
-                <Phone className="w-3 h-3" />
-                <span>+91 1800-123-4567</span>
-              </div> */}
-              <div className="flex items-center gap-1.5">
-                <Mail className="w-3 h-3" />
-                <a href="mailto:support@simmerce.com" className="text-slate-600 hover:text-red-600 transition-colors">support@simmerce.com</a>
-              </div>
-            </div>
-
-            {/* Right side */}
-            <div className="hidden md:flex items-center gap-6 text-xs text-slate-600">
-              <div className="flex items-center gap-1.5 text-red-500 font-medium">
-                <InfoIcon className="w-3 h-3" />
-                <span>Simmerce is now in Beta 🚀</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Main Header - Clean with only logo, search, and actions */}
       <header className="h-[50px] md:h-[70px] px-6 md:px-8">
         <div className="flex h-full items-center justify-between gap-6 max-w-7xl mx-auto">
@@ -99,15 +72,15 @@ export default function Header() {
               <img
                 src={Images.logo}
                 alt="Simmerce"
-                className="w-10 h-10 bg-slate-800 rounded-lg shadow-sm"
+                className="w-8 md:w-10 h-8 md:h-10 bg-slate-800 rounded-lg shadow-sm"
               />
               <div className="hidden md:block">
-                <span className="text-xl font-semibold tracking-tight">
+                <span className="text-lg font-semibold tracking-tight">
                   Simmerce
                 </span>
-                <div className="text-xs text-slate-500 font-medium">
+                <p className="text-xs text-muted-foreground">
                   B2B Marketplace
-                </div>
+                </p>
               </div>
             </Link>
           </div>
@@ -131,7 +104,7 @@ export default function Header() {
             </a>
 
             {/* Mobile Search Bar */}
-            <div className="md:hidden px-6 py-1 border-b border-slate-200">
+            <div className="md:hidden md:px-6 md:py-1 border-b border-b-slate-200">
               <GlobalSearch />
             </div>
 
@@ -151,7 +124,7 @@ export default function Header() {
             <Button
               variant="outline"
               size="icon"
-              className="size-10 border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-colors"
+              className="border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-colors"
             >
               <UserIcon className="w-4 h-4 text-slate-600" />
             </Button>

@@ -34,7 +34,7 @@ export function PageHeader({ title, description, breadcrumbs = [] }: PageHeaderP
           </nav>
         )}
         <div className="text-center">
-          <h1 className="text-2xl md:text-4xl font-medium text-slate-800 tracking-tight mb-4">{title}</h1>
+          <h1 className="text-xl md:text-4xl font-medium text-slate-800 tracking-tight mb-4">{title}</h1>
           {description && (
             <p className="text-sm md:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">{description}</p>
           )}

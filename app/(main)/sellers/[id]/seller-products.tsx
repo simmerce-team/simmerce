@@ -9,8 +9,8 @@ interface SellerProductsProps {
 
 export function SellerProducts({ products }: SellerProductsProps) {
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-8">
-      <div className="flex items-center justify-between mb-8">
+    <div className="bg-white rounded-2xl shadow-sm border border-slate-100 md:p-8">
+      <div className="hidden md:flex items-center justify-between mb-8">
         <h2 className="text-2xl font-medium text-slate-800 tracking-tight">Products & Services</h2>
         <div className="text-sm text-slate-600">
           {products.length} products available

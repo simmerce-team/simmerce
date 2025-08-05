@@ -47,7 +47,7 @@ export default async function CategoryPage({
         ]}
       />
       
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 md:py-12">
         <div className="mb-12">
           <h2 className="text-2xl font-medium text-slate-800 mb-8 tracking-tight">
             {currentCategory?.name || categoryName} Products

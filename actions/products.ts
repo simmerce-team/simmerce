@@ -31,10 +31,10 @@ export interface Product {
   } | null;
 }
 
-export async function fetchFeaturedProducts(limit: number = 8): Promise<Product[]> {
+export async function fetchFeaturedProducts(limit: number = 8, searchQuery?: string): Promise<Product[]> {
   const supabase = await createClient();
   
-  const { data: products, error } = await supabase
+  let query = supabase
     .from('products')
     .select(`
       *,
@@ -42,7 +42,14 @@ export async function fetchFeaturedProducts(limit: number = 8): Promise<Product[
       category:categories(id, name),
       images:product_images(id, url, alt_text, is_primary)
     `)
-    .eq('is_active', true)
+    .eq('is_active', true);
+
+  // Add search condition if searchQuery is provided
+  if (searchQuery && searchQuery.trim()) {
+    query = query.ilike('name', `%${searchQuery.trim()}%`);
+  }
+
+  const { data: products, error } = await query
     .order('created_at', { ascending: false })
     .limit(limit);
 
@@ -57,7 +64,7 @@ export async function fetchFeaturedProducts(limit: number = 8): Promise<Product[
     price: Number(product.price),
     images: product.images || [],
     category: product.category || null,
-    address: product.business.address || null,
+    address: product.business?.address || null,
   }));
 }
 

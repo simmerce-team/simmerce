@@ -60,13 +60,15 @@ export function ProductsSection() {
   }
 
   return (
-    <div className="py-4 bg-white">
-      <div className="container mx-auto px-6 max-w-7xl">
+    <div className="md:py-4 md:bg-white">
+      <div className="container mx-auto px-4 md:px-6 max-w-7xl">
+        <span className='hidden md:block'>
         <SectionHeader
           title="Featured Products"
           linkText="View all products"
           linkHref="/products"
         />
+        </span>
         {products.length > 0 ? (
           <ProductList products={products} />
         ) : (

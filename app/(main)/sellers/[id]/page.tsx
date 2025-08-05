@@ -55,16 +55,16 @@ export default async function SellerProfilePage({ params }: { params: Params }) 
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 md:py-8">
       {/* Seller Header */}
       <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
         <div className="flex flex-col md:flex-row items-start gap-6">
-          <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center text-3xl font-bold text-blue-600">
+          <div className="hidden md:flex w-24 h-24 rounded-full bg-gradient-to-br from-blue-50 to-blue-100 items-center justify-center text-3xl font-bold text-blue-600">
             {seller.name?.charAt(0) || 'B'}
           </div>
           <div className="flex-1">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-              <h1 className="text-2xl font-bold flex items-center gap-2">
+              <h1 className="md:text-2xl text-xl font-bold flex items-center gap-2">
                 {seller.name}
                 {seller.is_verified && (
                   <Badge variant="secondary" className="gap-1">
@@ -107,7 +107,7 @@ export default async function SellerProfilePage({ params }: { params: Params }) 
         </div>
 
         {/* Additional Business Details */}
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid mt-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Contact Information */}
           <div className="bg-gray-50 p-4 rounded-lg">
             <h3 className="font-medium text-gray-900 mb-3 flex items-center">
@@ -154,7 +154,7 @@ export default async function SellerProfilePage({ params }: { params: Params }) 
           </div>
 
           {/* Business Details */}
-          <div className="bg-gray-50 p-4 rounded-lg">
+          <div className="hidden md:block bg-gray-50 p-4 rounded-lg">
             <h3 className="font-medium text-gray-900 mb-3 flex items-center">
               <Building2 className="w-5 h-5 mr-2 text-blue-600" />
               Business Details
@@ -193,26 +193,12 @@ export default async function SellerProfilePage({ params }: { params: Params }) 
             </ul>
           </div>
 
-          {/* Certifications & Categories */}
-          <div className="bg-gray-50 p-4 rounded-lg">
+          {/* Business Information */}
+          <div className="hidden md:block bg-gray-50 p-4 rounded-lg">
             <h3 className="font-medium text-gray-900 mb-3 flex items-center">
               <Award className="w-5 h-5 mr-2 text-blue-600" />
               Business Information
             </h3>
-            
-            {/* Certifications */}
-            {seller.certifications && seller.certifications.length > 0 && (
-              <div className="mb-4">
-                <h4 className="text-sm font-medium text-gray-700 mb-2">Certifications</h4>
-                <div className="flex flex-wrap gap-2">
-                  {seller.certifications?.map((cert: string, index: number) => (
-                    <Badge key={index} variant="outline" className="text-xs">
-                      {cert}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            )}
             
             {/* Business Type */}
             {seller.businessType && seller.businessType.length > 0 && (
@@ -227,50 +213,11 @@ export default async function SellerProfilePage({ params }: { params: Params }) 
                 </div>
               </div>
             )}
-            
-            {/* Stats */}
-            <div className="space-y-2">
-              <h4 className="text-sm font-medium text-gray-700">Business Stats</h4>
-              <div className="grid grid-cols-2 gap-2 text-sm">
-                {stats?.total_products > 0 && (
-                  <div className="flex items-center">
-                    <span className="text-gray-600">Products:</span>
-                    <span className="ml-2 font-medium">{stats.total_products}</span>
-                  </div>
-                )}
-                {stats?.total_orders > 0 && (
-                  <div className="flex items-center">
-                    <span className="text-gray-600">Orders:</span>
-                    <span className="ml-2 font-medium">{stats.total_orders}</span>
-                  </div>
-                )}
-                {stats?.avg_rating > 0 && (
-                  <div className="flex items-center">
-                    <span className="text-gray-600">Rating:</span>
-                    <span className="ml-2 font-medium">{Number(stats.avg_rating).toFixed(1)}/5</span>
-                  </div>
-                )}
-                {stats?.response_rate > 0 && (
-                  <div className="flex items-center">
-                    <span className="text-gray-600">Response Rate:</span>
-                    <span className="ml-2 font-medium">{stats.response_rate}%</span>
-                  </div>
-                )}
-              </div>
-            </div>
           </div>
         </div>
 
         {/* Call to Action */}
-        <div className="mt-8 flex flex-col sm:flex-row gap-3">
-          {seller.phone && (
-            <Button asChild className="flex-1" size="lg">
-              <a href={`tel:${seller.phone.replace(/\D/g, '')}`}>
-                <Phone className="w-4 h-4 mr-2" />
-                Call Now
-              </a>
-            </Button>
-          )}
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-3">
           <Button variant="outline" className="flex-1" size="lg" disabled={!seller.email}>
             <MessageCircle className="w-4 h-4 mr-2" />
             Send Message
@@ -300,7 +247,7 @@ export default async function SellerProfilePage({ params }: { params: Params }) 
       {/* Products Section */}
       <div className="mt-12">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-gray-900">Products ({products.length})</h2>
+          <h2 className="md:text-xl font-semibold text-gray-900">Products ({products.length})</h2>
           {products.length > 4 && (
             <Link 
               href={`/sellers/${id}/products`} 

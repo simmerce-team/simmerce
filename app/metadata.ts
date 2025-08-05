@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 
 const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://simmerce.com';
-const title = 'Simmerce - B2B Marketplace for Indian Businesses';
+const title = 'Simmerce – Smart B2B Marketplace for Indian Businesses';
 const description = 'Connect with verified suppliers and buyers on Simmerce, the leading B2B marketplace for wholesale trade. Source quality products at competitive prices.';
 const keywords = 'B2B marketplace, wholesale, business supplier, bulk buying, trade platform, business products';
 
