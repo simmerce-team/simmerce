@@ -27,7 +27,7 @@ async function searchProducts(query: string) {
     // First, search in string fields
     const { data: products, error } = await supabase
       .from('products')
-      .select('id, name, description, price, unit, product_images(url)')
+      .select('id, name, description, price, unit, product_files(url)')
       .or(`name.ilike.%${query}%`)
       .order('name', { ascending: true })
       .limit(10);
@@ -69,7 +69,7 @@ async function searchProducts(query: string) {
       return {
         ...product,
         description,
-        image_url: product.product_images?.[0]?.url || null
+        image_url: product.product_files?.[0]?.url || null
       };
     });
     

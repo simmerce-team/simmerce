@@ -1,4 +1,5 @@
 import { createClient } from '@/utils/supabase/server';
+import { ProductImage } from './products';
 
 export interface Product {
   id: string;
@@ -8,20 +9,14 @@ export interface Product {
   unit: string;
   moq: number;
   stock_quantity: number;
+  youtube_url: string | null;
   created_at: string;
   updated_at: string;
   business_id: string;
   category_id: string;
-  images: ProductImage[];
+  files: ProductImage[];
   business: Business | null;
-  category: Category | null;
-}
-
-export interface ProductImage {
-  id: string;
-  url: string;
-  alt_text: string | null;
-  is_primary: boolean;
+  category: _Category | null;
 }
 
 export interface Business {
@@ -41,7 +36,7 @@ export interface Business {
   created_at: string;
 }
 
-export interface Category {
+export interface _Category {
   id: string;
   name: string;
   icon_url: string | null;
@@ -64,7 +59,7 @@ export async function getProductById(id: string): Promise<Product | null> {
         city:cities(id, name, state:states(id, name))
       ),
       category:categories(id, name, icon_url),
-      images:product_images(id, url, alt_text, is_primary, display_order)
+      files:product_files(id, url, file_type, is_primary, display_order)
     `)
     .eq('id', id)
     .eq('is_active', true)
@@ -92,7 +87,7 @@ export async function getProductById(id: string): Promise<Product | null> {
   return {
     ...product,
     price: Number(product.price),
-    images: product.images || [],
+    files: product.files || [],
     category: product.category || null,
     business: formattedBusiness,
   };

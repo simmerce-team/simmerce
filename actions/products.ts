@@ -5,7 +5,7 @@ import { createClient } from '@/utils/supabase/server';
 export interface ProductImage {
   id: string;
   url: string;
-  alt_text: string | null;
+  file_type: string;
   is_primary: boolean;
 }
 
@@ -19,7 +19,7 @@ export interface Product {
   stock_quantity: number;
   address: string | null;
   created_at: string;
-  images: ProductImage[];
+  files: ProductImage[];
   business: {
     id: string;
     name: string;
@@ -40,7 +40,7 @@ export async function fetchFeaturedProducts(limit: number = 8, searchQuery?: str
       *,
       business:businesses(id, name, logo_url, address),
       category:categories(id, name),
-      images:product_images(id, url, alt_text, is_primary)
+      files:product_files(id, url, file_type, is_primary)
     `)
     .eq('is_active', true);
 
@@ -62,7 +62,7 @@ export async function fetchFeaturedProducts(limit: number = 8, searchQuery?: str
   return (products || []).map(product => ({
     ...product,
     price: Number(product.price),
-    images: product.images || [],
+    files: product.files || [],
     category: product.category || null,
     address: product.business?.address || null,
   }));
@@ -104,7 +104,7 @@ export async function fetchProductsByLocation(location: string, limit: number = 
       *,
       business:businesses(id, name, logo_url, is_verified, address),
       category:categories(id, name),
-      images:product_images(id, url, alt_text, is_primary)
+      files:product_files(id, url, file_type, is_primary)
     `)
     .in('business_id', businessIds)
     .eq('is_active', true)
@@ -120,7 +120,7 @@ export async function fetchProductsByLocation(location: string, limit: number = 
   return (products || []).map(product => ({
     ...product,
     price: Number(product.price),
-    images: product.images || [],
+    files: product.files || [],
     category: product.category || null,
     address: product.business.address || null,
   }));
@@ -135,7 +135,7 @@ export async function fetchProductsByCategory(category: string, limit: number = 
       *,
       business:businesses(id, name, logo_url, is_verified, address),
       category:categories(id, name),
-      images:product_images(id, url, alt_text, is_primary)
+      files:product_files(id, url, file_type, is_primary)
     `)
     .eq('category.name', category)
     .eq('is_active', true)
@@ -151,7 +151,7 @@ export async function fetchProductsByCategory(category: string, limit: number = 
   return (products || []).map(product => ({
     ...product,
     price: Number(product.price),
-    images: product.images || [],
+    files: product.files || [],
     category: product.category || null,
     address: product.business.address || null,
   }));

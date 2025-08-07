@@ -19,8 +19,8 @@ import {
   XCircle,
 } from "lucide-react";
 import { Metadata, ResolvingMetadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
+import { ImageArea } from "./_component/image_area";
 
 type Params = Promise<{ id: string }>;
 
@@ -39,7 +39,7 @@ export async function generateMetadata(
       "Explore this product on Simmerce",
     openGraph: {
       images: [
-        product?.images?.[0]?.url || Images.placeholder,
+        product?.files?.[0]?.url || Images.placeholder,
         ...previousImages,
       ],
     },
@@ -84,43 +84,7 @@ const ProductDetailPage = async ({ params }: { params: Params }) => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column - Product Images */}
           <div className="lg:col-span-1 space-y-4">
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-              <div className="aspect-square relative bg-gradient-to-br from-slate-50/50 to-slate-100/30">
-                <Image
-                  src={product?.images?.[0]?.url || Images.placeholder}
-                  alt={product?.name}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 1024px) 100vw, 33vw"
-                  priority
-                />
-              </div>
-
-              {/* Image Gallery */}
-              {product?.images?.length > 1 && (
-                <div className="p-4 border-t border-slate-100">
-                  <h3 className="text-sm font-medium text-slate-700 mb-3">
-                    More Views
-                  </h3>
-                  <div className="grid grid-cols-4 gap-3">
-                    {product.images.map((img, index) => (
-                      <div
-                        key={index}
-                        className="aspect-square bg-slate-50 border border-slate-200 rounded-lg overflow-hidden cursor-pointer hover:border-primary transition-colors"
-                      >
-                        <Image
-                          src={img?.url || Images.placeholder}
-                          alt={`${product?.name} ${index + 1}`}
-                          width={80}
-                          height={80}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
+            <ImageArea product={product} />
 
             {/* Features */}
             {/* <Card>
@@ -305,25 +269,6 @@ const ProductDetailPage = async ({ params }: { params: Params }) => {
                 </div>
               </CardContent>
             </Card>
-
-            {/* Similar Products (Placeholder) */}
-            <div className="mt-8">
-              <h3 className="text-lg font-semibold text-slate-900 mb-4">
-                Similar Products
-              </h3>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                {[1, 2, 3, 4].map((item) => (
-                  <div
-                    key={item}
-                    className="bg-white rounded-lg border border-slate-200 p-3 hover:shadow-md transition-shadow"
-                  >
-                    <div className="aspect-square bg-slate-100 rounded-md mb-2"></div>
-                    <div className="h-4 bg-slate-200 rounded w-3/4 mb-2"></div>
-                    <div className="h-3 bg-slate-100 rounded w-1/2"></div>
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
         </div>
       </div>

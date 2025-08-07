@@ -72,7 +72,7 @@ export async function getBusinessProducts(businessId: string, limit: number = 4)
     .select(`
       *,
       category:categories(id, name),
-      images:product_images(id, url, alt_text, is_primary)
+      files:product_files(id, url, alt_text, is_primary)
     `)
     .eq('business_id', businessId)
     .eq('is_active', true)
@@ -87,7 +87,7 @@ export async function getBusinessProducts(businessId: string, limit: number = 4)
   return (products || []).map(product => ({
     ...product,
     price: Number(product.price),
-    images: product.images || [],
+    files: product.files || [],
     category: product.category || null,
   }));
 }
