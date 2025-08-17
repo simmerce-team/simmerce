@@ -1,4 +1,5 @@
 import { Toaster } from "@/components/ui/sonner";
+import { AuthProvider } from "@/context/AuthContext";
 import { QueryClientProviders } from "@/providers/query-client-providers";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -29,10 +30,12 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <QueryClientProviders>
-          {children}
-          <Toaster /> 
-          <Analytics />
-          <SpeedInsights />
+          <AuthProvider>
+            {children}
+            <Toaster />
+            <Analytics />
+            <SpeedInsights />
+          </AuthProvider>
         </QueryClientProviders>
       </body>
     </html>

@@ -12,6 +12,7 @@ export interface ProductImage {
 export interface Product {
   id: string;
   name: string;
+  slug: string;
   description: string | null;
   price: number;
   unit: string;
@@ -23,7 +24,6 @@ export interface Product {
   business: {
     id: string;
     name: string;
-    logo_url: string | null;
   };
   category: {
     id: string;
@@ -38,7 +38,7 @@ export async function fetchFeaturedProducts(limit: number = 8, searchQuery?: str
     .from('products')
     .select(`
       *,
-      business:businesses(id, name, logo_url, address),
+      business:businesses(id, name, address),
       category:categories(id, name),
       files:product_files(id, url, file_type, is_primary)
     `)
@@ -102,7 +102,7 @@ export async function fetchProductsByLocation(location: string, limit: number = 
     .from('products')
     .select(`
       *,
-      business:businesses(id, name, logo_url, is_verified, address),
+      business:businesses(id, name, address),
       category:categories(id, name),
       files:product_files(id, url, file_type, is_primary)
     `)
@@ -133,7 +133,7 @@ export async function fetchProductsByCategory(category: string, limit: number = 
     .from('products')
     .select(`
       *,
-      business:businesses(id, name, logo_url, is_verified, address),
+      business:businesses(id, name, address),
       category:categories(id, name),
       files:product_files(id, url, file_type, is_primary)
     `)

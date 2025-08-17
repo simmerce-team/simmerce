@@ -7,7 +7,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Images } from "@/utils/constant";
 import {
   CheckCircle,
   Clock,
@@ -18,37 +17,36 @@ import {
   Truck,
   XCircle,
 } from "lucide-react";
-import { Metadata, ResolvingMetadata } from "next";
 import Link from "next/link";
 import { ImageArea } from "./_component/image_area";
 
-type Params = Promise<{ id: string }>;
+type Params = Promise<{ slug: string }>;
 
-export async function generateMetadata(
-  { params }: { params: Params },
-  parent: ResolvingMetadata
-): Promise<Metadata> {
-  const { id } = await params;
-  const product = await getProductById(id);
-  const previousImages = (await parent).openGraph?.images || [];
+// export async function generateMetadata(
+//   { params }: { params: Params },
+//   parent: ResolvingMetadata
+// ): Promise<Metadata> {
+//   const { slug } = await params;
+//   const product = await getProductById(slug);
+//   const previousImages = (await parent).openGraph?.images || [];
 
-  return {
-    title: `${product?.name} | Simmerce`,
-    description:
-      product?.description?.substring(0, 160) ||
-      "Explore this product on Simmerce",
-    openGraph: {
-      images: [
-        product?.files?.[0]?.url || Images.placeholder,
-        ...previousImages,
-      ],
-    },
-  };
-}
+//   return {
+//     title: `${product?.name} | Simmerce`,
+//     description:
+//       product?.description?.substring(0, 160) ||
+//       "Explore this product on Simmerce",
+//     openGraph: {
+//       images: [
+//         product?.files?.[0]?.url || Images.placeholder,
+//         ...previousImages,
+//       ],
+//     },
+//   };
+// }
 
 const ProductDetailPage = async ({ params }: { params: Params }) => {
   const paramsData = await params;
-  const product = await getProductById(paramsData.id);
+  const product = await getProductById(paramsData.slug);
 
   if (!product) {
     return (
@@ -172,51 +170,27 @@ const ProductDetailPage = async ({ params }: { params: Params }) => {
                 <CardTitle>Product Details</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="prose max-w-none text-slate-700">
                   {product.description ? (
-                    <p className="whitespace-pre-line">{product.description}</p>
+                    typeof product.description === 'string' ? (
+                      <div 
+                        className="prose prose-slate max-w-none"
+                        dangerouslySetInnerHTML={{ __html: product.description }} 
+                      />
+                    ) : (
+                      <div className="space-y-2">
+                        {Object.entries(product.description).map(([key, value]) => (
+                          <div key={key} className="flex gap-2">
+                            <span className="font-medium">{key}:</span>
+                            <span>{String(value)}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )
                   ) : (
                     <p className="text-slate-500 italic">
                       No description available for this product.
                     </p>
                   )}
-                </div>
-
-                {/* Specifications */}
-                <div className="mt-6 border-t border-slate-100 pt-6">
-                  <h3 className="font-medium text-slate-900 mb-4">
-                    Specifications
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <p className="text-sm">
-                        <span className="text-slate-500">Category:</span>{" "}
-                        <span className="font-medium">
-                          {product.category?.name || "N/A"}
-                        </span>
-                      </p>
-                      <p className="text-sm">
-                        <span className="text-slate-500">Unit:</span>{" "}
-                        <span className="font-medium">{product.unit}</span>
-                      </p>
-                    </div>
-                    <div className="space-y-2">
-                      <p className="text-sm">
-                        <span className="text-slate-500">MOQ:</span>{" "}
-                        <span className="font-medium">
-                          {product.moq.toLocaleString()} {product.unit}
-                        </span>
-                      </p>
-                      <p className="text-sm">
-                        <span className="text-slate-500">Stock:</span>{" "}
-                        <span className="font-medium">
-                          {product.stock_quantity.toLocaleString()}{" "}
-                          {product.unit} available
-                        </span>
-                      </p>
-                    </div>
-                  </div>
-                </div>
               </CardContent>
             </Card>
 
@@ -238,11 +212,11 @@ const ProductDetailPage = async ({ params }: { params: Params }) => {
                         {product.business?.name || "Business Name"}
                       </h3>
                       <div className="flex items-center space-x-3">
-                        {product.business?.is_verified && (
+                        {/* {product.business?.is_verified && (
                           <span className="inline-flex items-center text-xs font-medium text-green-700 bg-green-50 px-2 py-0.5 rounded">
                             <Shield className="w-3 h-3 mr-1" /> Verified Seller
                           </span>
-                        )}
+                        )} */}
                         {/* <div className="flex items-center text-xs text-slate-600">
                           <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500 mr-1" />
                           4.8 (24 reviews)
@@ -258,7 +232,7 @@ const ProductDetailPage = async ({ params }: { params: Params }) => {
                   </div>
                   <div className="flex flex-col sm:flex-row gap-3 sm:ml-auto">
                     <Link
-                      href={`/sellers/${product.business?.id}`}
+                      href={`/sellers/${product.business?.slug}`}
                       className="w-full sm:w-auto"
                     >
                       <Button variant="outline" className="w-full">

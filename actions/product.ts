@@ -4,11 +4,13 @@ import { ProductImage } from './products';
 export interface Product {
   id: string;
   name: string;
-  description: string | null;
+  slug: string;
+  description: Record<string, any> | null;
   price: number;
   unit: string;
   moq: number;
   stock_quantity: number;
+  view_count?: number;
   youtube_url: string | null;
   created_at: string;
   updated_at: string;
@@ -17,13 +19,13 @@ export interface Product {
   files: ProductImage[];
   business: Business | null;
   category: _Category | null;
+  is_active?: boolean;
 }
 
 export interface Business {
   id: string;
   name: string;
-  logo_url: string | null;
-  is_verified: boolean;
+  slug: string;
   address: string | null;
   city?: {
     id: string;
@@ -42,7 +44,7 @@ export interface _Category {
   icon_url: string | null;
 }
 
-export async function getProductById(id: string): Promise<Product | null> {
+export async function getProductById(slug: string): Promise<Product | null> {
   const supabase = await createClient();
   
   const { data: product, error } = await supabase
@@ -52,16 +54,14 @@ export async function getProductById(id: string): Promise<Product | null> {
       business:businesses(
         id, 
         name, 
-        logo_url, 
-        is_verified, 
-        address, 
+        slug,
         created_at,
         city:cities(id, name, state:states(id, name))
       ),
       category:categories(id, name, icon_url),
       files:product_files(id, url, file_type, is_primary, display_order)
     `)
-    .eq('id', id)
+    .eq('slug', slug)
     .eq('is_active', true)
     .single();
 
@@ -75,9 +75,7 @@ export async function getProductById(id: string): Promise<Product | null> {
   // Format the address with city and state
   const formattedBusiness = product.business ? {
     ...product.business,
-    logo: product.business.logo_url,
     address: [
-      product.business.address,
       product.business.city?.name,
       product.business.city?.state?.name
     ].filter(Boolean).join(', '),
@@ -96,8 +94,20 @@ export async function getProductById(id: string): Promise<Product | null> {
 export async function incrementProductViewCount(productId: string): Promise<void> {
   const supabase = await createClient();
   
-  await supabase
-    .from('products')
-    .update({ view_count: supabase.rpc('increment') })
-    .eq('id', productId);
+  try {
+    const { error } = await supabase.rpc('increment_product_views', {
+      product_id: productId
+    });
+    
+    if (error) {
+      console.error('Error incrementing view count:', error);
+      // Fallback to direct update if RPC fails
+      await supabase
+        .from('products')
+        .update({ view_count: supabase.rpc('increment') })
+        .eq('id', productId);
+    }
+  } catch (err) {
+    console.error('Failed to increment view count:', err);
+  }
 }

@@ -4,12 +4,10 @@ export interface Business {
   id: string;
   name: string;
   description: string | null;
-  logo_url: string | null;
   gst_number: string | null;
   address: string | null;
   city_id: string | null;
   business_type_id: string | null;
-  is_verified: boolean;
   created_at: string;
   updated_at: string;
   email?: string | null;
@@ -35,15 +33,15 @@ export interface Business {
 export interface Businesses {
     id: string,
     name: string,
+    slug: string,
     gst_number?: string | null,
     verified: boolean,
     description: string,
     location: string,
-    businessType: string,
-    logo_url?: string | null
-}
+    businessType: string
+  }
 
-export async function getBusinessById(id: string): Promise<Business | null> {
+export async function getBusinessById(slug: string): Promise<Business | null> {
   const supabase = await createClient();
   
   const { data: business, error } = await supabase
@@ -53,7 +51,7 @@ export async function getBusinessById(id: string): Promise<Business | null> {
       city:cities(id, name, state:states(id, name)),
       business_type:business_type_id (id, name)
     `)
-    .eq('id', id)
+    .eq('slug', slug)
     .single();
 
   if (error) {
@@ -90,21 +88,6 @@ export async function getBusinessProducts(businessId: string, limit: number = 4)
     files: product.files || [],
     category: product.category || null,
   }));
-}
-
-export async function getBusinessStats(businessId: string) {
-  const supabase = await createClient();
-  
-  const { data, error } = await supabase.rpc('get_business_metrics', {
-    p_business_id: businessId
-  });
-
-  if (error) {
-    console.error('Error fetching business stats:', error);
-    return null;
-  }
-
-  return data;
 }
 
 

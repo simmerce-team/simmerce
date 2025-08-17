@@ -20,12 +20,9 @@ const getYoutubeEmbedUrl = (url: string | null): string | null => {
 export const ImageArea = ({ product }: { product: Product }) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [showYoutubeDialog, setShowYoutubeDialog] = useState(false);
-  const [showImageDialog, setShowImageDialog] = useState(false);
   
   const images = product?.files?.filter((img) => img.file_type === "image") || [];
   const pdf = product?.files?.filter((img) => img.file_type === "pdf") || [];
-  const primaryImageIndex = images.findIndex(img => img.is_primary) || 0;
-  const [mainImageIndex, setMainImageIndex] = useState(primaryImageIndex >= 0 ? primaryImageIndex : 0);
   
   const youtubeUrl = product?.youtube_url;
   const embedUrl = getYoutubeEmbedUrl(youtubeUrl);
@@ -34,27 +31,14 @@ export const ImageArea = ({ product }: { product: Product }) => {
 
   const handleThumbnailClick = (index: number) => {
     setSelectedImageIndex(index);
-    setMainImageIndex(index);
   };
-
-  const handleNextImage = () => {
-    const nextIndex = (selectedImageIndex + 1) % images.length;
-    setSelectedImageIndex(nextIndex);
-  };
-
-  const handlePrevImage = () => {
-    const prevIndex = (selectedImageIndex - 1 + images.length) % images.length;
-    setSelectedImageIndex(prevIndex);
-  };
-
   const currentImage = images[selectedImageIndex] || images[0];
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
       {/* Main Image */}
       <div 
-        className="aspect-square relative bg-gradient-to-br from-slate-50/50 to-slate-100/30 cursor-zoom-in"
-        onClick={() => images.length > 0 && setShowImageDialog(true)}
+        className="aspect-square relative bg-gradient-to-br from-slate-50/50 to-slate-100/30"
       >
         <Image
           src={currentImage?.url || Images.placeholder}
@@ -149,84 +133,6 @@ export const ImageArea = ({ product }: { product: Product }) => {
               allowFullScreen
               title="YouTube video player"
             />
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Image Dialog */}
-      <Dialog open={showImageDialog} onOpenChange={setShowImageDialog}>
-        <DialogContent className="max-w-4xl p-0 bg-transparent border-none shadow-none">
-          <div className="relative w-full h-[80vh] bg-black rounded-lg">
-            <button 
-              onClick={() => setShowImageDialog(false)}
-              className="absolute -top-10 right-0 text-white hover:text-gray-300 z-10"
-              aria-label="Close image"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-            
-            {images.length > 1 && (
-              <>
-                <button 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handlePrevImage();
-                  }}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 z-10"
-                  aria-label="Previous image"
-                >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                </button>
-                
-                <button 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleNextImage();
-                  }}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 z-10"
-                  aria-label="Next image"
-                >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-              </>
-            )}
-            
-            <div className="w-full h-full flex items-center justify-center p-4">
-              <Image
-                src={currentImage?.url || Images.placeholder}
-                alt={`${product?.name} (${selectedImageIndex + 1} of ${images.length})`}
-                width={1200}
-                height={800}
-                className="max-w-full max-h-full object-contain"
-                priority
-              />
-            </div>
-            
-            {images.length > 1 && (
-              <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
-                {images.map((_, index) => (
-                  <button
-                    key={index}
-                    className={`w-2 h-2 rounded-full transition-colors ${
-                      index === selectedImageIndex 
-                        ? 'bg-white' 
-                        : 'bg-white/50 hover:bg-white/75'
-                    }`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedImageIndex(index);
-                    }}
-                    aria-label={`View image ${index + 1} of ${images.length}`}
-                  />
-                ))}
-              </div>
-            )}
           </div>
         </DialogContent>
       </Dialog>

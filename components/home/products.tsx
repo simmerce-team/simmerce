@@ -1,14 +1,12 @@
-'use client';
+"use client";
 
-import { fetchFeaturedProducts, Product } from '@/actions/products';
-import { useEffect, useState } from 'react';
-import { ProductList } from '../product/product-list';
-import { SectionHeader } from '../section-header';
+import { fetchFeaturedProducts, Product } from "@/actions/products";
+import { useEffect, useState } from "react";
+import { ProductCard } from "../product/product-card";
 
 export function ProductsSection() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -16,10 +14,8 @@ export function ProductsSection() {
         setLoading(true);
         const data = await fetchFeaturedProducts(8);
         setProducts(data);
-        setError(null);
       } catch (err) {
-        console.error('Failed to load products:', err);
-        setError('Failed to load featured products. Please try again later.');
+        console.error("Failed to load products:", err);
       } finally {
         setLoading(false);
       }
@@ -28,55 +24,30 @@ export function ProductsSection() {
     loadProducts();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="py-4 bg-white">
-        <div className="container mx-auto px-6 max-w-7xl">
-          <SectionHeader
-            title="Featured Products"
-            linkText="View all products"
-            linkHref="/products"
-          />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-80 bg-slate-100 rounded-xl animate-pulse"></div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="py-4 bg-white">
-        <div className="container mx-auto px-6 max-w-7xl text-center">
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg inline-block">
-            {error}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="md:py-4 md:bg-white">
-      <div className="container mx-auto px-4 md:px-6 max-w-7xl">
-        <span className='hidden md:block'>
-        <SectionHeader
-          title="Featured Products"
-          linkText="View all products"
-          linkHref="/products"
-        />
-        </span>
-        {products.length > 0 ? (
-          <ProductList products={products} />
-        ) : (
-          <div className="text-center py-4">
-            <p className="text-slate-500">No featured products available at the moment.</p>
-          </div>
-        )}
-      </div>
-    </div>
+    <>
+      {loading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {[...Array(4)].map((_, i) => (
+            <div
+              key={i}
+              className="h-80 bg-slate-100 rounded-xl animate-pulse"
+            ></div>
+          ))}
+        </div>
+      ) : products.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {products.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-4">
+          <p className="text-slate-500">
+            No featured products available at the moment.
+          </p>
+        </div>
+      )}
+    </>
   );
 }

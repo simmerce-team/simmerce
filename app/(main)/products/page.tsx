@@ -1,7 +1,7 @@
 import { fetchFeaturedProducts } from "@/actions/products";
 import { Loading } from "@/components/loading";
 import { PageHeader } from "@/components/page-header";
-import { ProductList } from "@/components/product/product-list";
+import { ProductCard } from "@/components/product/product-card";
 import { Button } from "@/components/ui/button";
 import { Suspense } from "react";
 
@@ -55,7 +55,11 @@ export default async function ProductsPage({ searchParams }: PageProps) {
           </div>
         ) : (
           <Suspense fallback={<Loading />}>
-            <ProductList products={products} />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {products.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
           </Suspense>
         )}
 

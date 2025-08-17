@@ -1,7 +1,13 @@
 import { Images } from "@/utils/constant";
 import Link from "next/link";
 import React from "react";
-import { FaFacebook, FaInstagram, FaLinkedin, FaTwitter, FaYoutube } from "react-icons/fa";
+import {
+  FaFacebook,
+  FaInstagram,
+  FaLinkedin,
+  FaTwitter,
+  FaYoutube,
+} from "react-icons/fa";
 
 interface Footer7Props {
   logo?: {
@@ -31,10 +37,13 @@ const defaultSections = [
   {
     title: "Quick Links",
     links: [
-      { name: "Verified Suppliers", href: "/sellers?filter=verified" },
-      { name: "Become a Seller", href: process.env.NEXT_PUBLIC_SELLER_URL || "/seller/register" },
+      // { name: "Verified Suppliers", href: "/sellers?filter=verified" },
+      {
+        name: "Become a Seller",
+        href: process.env.NEXT_PUBLIC_SELLER_URL || "/seller/register",
+      },
       { name: "Pricing Plans", href: "/pricing" },
-      { name: "Success Stories", href: "/success-stories" },
+      // { name: "Success Stories", href: "/success-stories" },
     ],
   },
   {
@@ -42,27 +51,43 @@ const defaultSections = [
     links: [
       { name: "About Us", href: "/about" },
       { name: "Contact", href: "/contact" },
-      { name: "Terms and Conditions", href: "/terms" },
-      { name: "Privacy Policy", href: "/privacy" },
     ],
   },
   {
     title: "Support",
     links: [
       { name: "Help Center", href: "/help" },
-      { name: "Safety Guidelines", href: "/safety" },
       { name: "Report Issue", href: "/report" },
-      { name: "Feedback", href: "/feedback" },
     ],
   },
 ];
 
 const defaultSocialLinks = [
-  { icon: <FaInstagram className="size-5" />, href: "https://www.instagram.com/gosimmerce", label: "Instagram" },
-  { icon: <FaFacebook className="size-5" />, href: "https://www.facebook.com/gosimmerce", label: "Facebook" },
-  { icon: <FaTwitter className="size-5" />, href: "https://twitter.com/gosimmerce", label: "Twitter" },
-  { icon: <FaLinkedin className="size-5" />, href: "https://www.linkedin.com/company/gosimmerce", label: "LinkedIn" },
-  { icon: <FaYoutube className="size-5" />, href: "https://www.youtube.com/gosimmerce", label: "YouTube" },
+  {
+    icon: <FaInstagram className="size-5" />,
+    href: "https://www.instagram.com/gosimmerce",
+    label: "Instagram",
+  },
+  {
+    icon: <FaFacebook className="size-5" />,
+    href: "https://www.facebook.com/gosimmerce",
+    label: "Facebook",
+  },
+  {
+    icon: <FaTwitter className="size-5" />,
+    href: "https://twitter.com/gosimmerce",
+    label: "Twitter",
+  },
+  {
+    icon: <FaLinkedin className="size-5" />,
+    href: "https://www.linkedin.com/company/gosimmerce",
+    label: "LinkedIn",
+  },
+  {
+    icon: <FaYoutube className="size-5" />,
+    href: "https://www.youtube.com/gosimmerce",
+    label: "YouTube",
+  },
 ];
 
 export const Footer = ({
@@ -78,21 +103,30 @@ export const Footer = ({
           <div className="flex w-full flex-col justify-between gap-8 lg:items-start lg:max-w-sm">
             {/* Logo */}
             <div className="flex items-center gap-3 lg:justify-start">
-                <img
-                  src={Images.logo}
-                  alt="Simmerce"
-                  title="Simmerce"
-                  className="h-10 bg-slate-800 rounded-lg shadow-sm"
-                />
-              <h2 className="text-xl font-medium text-slate-800 tracking-tight">Simmerce</h2>
+              <img
+                src={Images.logo}
+                alt="Simmerce"
+                title="Simmerce"
+                className="h-10 bg-slate-800 rounded-lg shadow-sm"
+              />
+              <h2 className="text-xl font-medium text-slate-800 tracking-tight">
+                Simmerce
+              </h2>
             </div>
             <p className="text-slate-600 text-sm leading-relaxed">
               {description}
             </p>
             <ul className="flex items-center space-x-4">
               {socialLinks.map((social, idx) => (
-                <li key={idx} className="text-slate-500 hover:text-red-600 transition-colors">
-                  <a href={social.href} aria-label={social.label} className="block p-2 rounded-lg hover:bg-red-50 transition-all">
+                <li
+                  key={idx}
+                  className="text-slate-500 hover:text-red-600 transition-colors"
+                >
+                  <a
+                    href={social.href}
+                    aria-label={social.label}
+                    className="block p-2 rounded-lg hover:bg-red-50 transition-all"
+                  >
                     {social.icon}
                   </a>
                 </li>
@@ -102,11 +136,16 @@ export const Footer = ({
           <div className="grid w-full gap-8 md:grid-cols-2 lg:grid-cols-3 lg:gap-12">
             {sections.map((section, sectionIdx) => (
               <div key={sectionIdx}>
-                <h3 className="mb-6 font-medium text-slate-800 text-sm uppercase tracking-wide">{section.title}</h3>
+                <h3 className="mb-6 font-medium text-slate-800 text-sm uppercase tracking-wide">
+                  {section.title}
+                </h3>
                 <ul className="space-y-4 text-sm">
                   {section.links.map((link, linkIdx) => (
                     <li key={linkIdx}>
-                      <Link href={link.href} className="text-slate-600 hover:text-red-600 transition-colors font-medium">
+                      <Link
+                        href={link.href}
+                        className="text-slate-600 hover:text-red-600 transition-colors font-medium"
+                      >
                         {link.name}
                       </Link>
                     </li>
@@ -118,6 +157,20 @@ export const Footer = ({
         </div>
         <div className="mt-12 flex flex-col justify-between gap-6 border-t border-slate-200 pt-8 text-sm md:flex-row md:items-center">
           <p className="text-slate-500 order-2 lg:order-1">{copyright}</p>
+          <div className="flex items-center gap-4 order-1 lg:order-2">
+            <Link
+              href="/privacy"
+              className="text-slate-500 hover:text-red-600 transition-colors font-medium"
+            >
+              Privacy Policy
+            </Link>
+            <Link
+              href="/terms"
+              className="text-slate-500 hover:text-red-600 transition-colors font-medium"
+            >
+              Terms of Use
+            </Link>
+          </div>
         </div>
       </div>
     </section>

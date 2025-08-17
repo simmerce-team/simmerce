@@ -53,18 +53,14 @@ export default async function SellersPage() {
           {businesses.map((seller) => (
             <Link
               key={seller.id}
-              href={`/sellers/${seller.id}`}
+              href={`/sellers/${seller.slug}`}
               className="block group"
             >
               <div className="bg-white rounded-2xl border border-slate-100 p-6 hover:shadow-lg transition-all duration-300 hover:border-slate-200">
                 {/* Header */}
                 <div className="flex items-start gap-4 mb-4">
                   <div className="w-14 h-14 rounded-xl bg-red-50 flex items-center justify-center text-lg font-semibold text-red-600 border border-red-100">
-                    {seller.logo_url ? (
-                      <img src={seller.logo_url} alt={seller.name} className="w-full h-full object-cover" />
-                    ) : (
-                      seller.name.charAt(0).toUpperCase()
-                    )}
+                    {seller.name.charAt(0).toUpperCase()}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
