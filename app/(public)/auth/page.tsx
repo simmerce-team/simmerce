@@ -34,7 +34,7 @@ const formSchema = z.object({
 function AuthForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const redirectedFrom = searchParams.get('redirectedFrom') || '/dashboard'
+  const redirectedFrom = searchParams.get('redirectedFrom') || '/'
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

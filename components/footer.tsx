@@ -35,7 +35,7 @@ interface Footer7Props {
 
 const defaultSections = [
   {
-    title: "Quick Links",
+    title: "For Seller",
     links: [
       // { name: "Verified Suppliers", href: "/sellers?filter=verified" },
       {

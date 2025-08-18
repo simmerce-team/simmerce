@@ -1,6 +1,7 @@
 "use client"
 
 import { signIn } from "@/actions/auth"
+import { PasswordInput } from "@/components/password-input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
@@ -26,7 +27,7 @@ function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const email = searchParams.get('email') || ''
-  const redirectTo = searchParams.get('redirectedFrom') || '/dashboard'
+  const redirectTo = searchParams.get('redirectedFrom') || '/'
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -54,8 +55,8 @@ function LoginForm() {
       toast.error(error)
     } else {
       toast.success('Successfully signed in')
-      router.push(redirectTo)
-      router.refresh()
+      // Force a full page reload to ensure all auth state is properly updated
+      window.location.href = redirectTo
     }
   }
 
@@ -92,22 +93,9 @@ function LoginForm() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <div className="flex items-center justify-between">
-                    <FormLabel>Password</FormLabel>
-                    <Link
-                      href="/auth/forgot-password"
-                      className="text-sm font-medium text-primary hover:underline"
-                    >
-                      Forgot password?
-                    </Link>
-                  </div>
+                  <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input
-                      type="password"
-                      placeholder="••••••••"
-                      autoComplete="current-password"
-                      {...field}
-                    />
+                    <PasswordInput placeholder="Enter your password" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

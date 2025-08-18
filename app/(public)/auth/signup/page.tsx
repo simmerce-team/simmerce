@@ -1,6 +1,7 @@
 "use client"
 
 import { signUp } from "@/actions/auth"
+import { PasswordInput } from "@/components/password-input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
@@ -17,13 +18,19 @@ const formSchema = z.object({
   name: z.string().min(3, {
     message: "Name must be at least 3 characters long.",
   }),
-  email: z.email({
-    message: "Invalid email address.",
+  email: z.string().email({
+    message: "Please enter a valid email address.",
   }),
   password: z.string().min(8, {
     message: "Password must be at least 8 characters long.",
   }),
+  confirmPassword: z.string().min(8, {
+    message: "Please confirm your password.",
+  }),
   phone: z.string().optional(),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
 })
 
 function SignupForm() {
@@ -37,6 +44,7 @@ function SignupForm() {
       name: "",
       email: email,
       password: "",
+      confirmPassword: "",
       phone: "",
     },
   })
@@ -62,7 +70,6 @@ function SignupForm() {
     if (error) {
       toast.error(error)
     } else {
-      toast.success('Check your email to verify your account')
       router.push('/auth')
     }
   }
@@ -116,7 +123,20 @@ function SignupForm() {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input type="password" {...field} />
+                    <PasswordInput placeholder="Create a password" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Confirm Password</FormLabel>
+                  <FormControl>
+                    <PasswordInput placeholder="Confirm your password" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
