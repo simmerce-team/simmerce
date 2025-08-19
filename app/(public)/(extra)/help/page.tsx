@@ -56,7 +56,7 @@ export default function HelpPage() {
       title: "For Suppliers",
       description: "Guide to listing products and managing your supplier profile",
       color: "green",
-      topics: ["Product Listing", "Pricing Strategy", "Order Management"]
+      topics: ["Product Listing", "Pricing Strategy", "Lead Management"]
     },
     {
       icon: Search,
@@ -95,7 +95,7 @@ export default function HelpPage() {
             <input
               type="text"
               placeholder="Search help articles..."
-              className="w-full px-5 py-4 border border-slate-200 rounded-xl pl-12 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+              className="w-full px-5 py-4 border border-slate-200 rounded-xl pl-12 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
             />
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
           </div>
@@ -117,7 +117,7 @@ export default function HelpPage() {
                     <div key={topicIndex} className="text-xs text-slate-500">• {topic}</div>
                   ))}
                 </div>
-                <Button variant="outline" className="w-full mt-4 border-slate-200 hover:border-red-300 hover:bg-red-50 text-sm">
+                <Button variant="outline" className="w-full mt-4 border-slate-200 hover:border-primary hover:bg-primary/10 text-sm">
                   Learn More
                 </Button>
               </div>
@@ -132,7 +132,7 @@ export default function HelpPage() {
             {faqs.map((faq, index) => (
               <div key={index} className="border-b border-slate-100 pb-6 last:border-b-0">
                 <h3 className="font-medium text-slate-800 mb-3 flex items-start gap-2">
-                  <HelpCircle className="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" />
+                  <HelpCircle className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
                   {faq.question}
                 </h3>
                 <p className="text-sm text-slate-600 leading-relaxed pl-6">{faq.answer}</p>
@@ -142,16 +142,16 @@ export default function HelpPage() {
         </div>
 
         {/* Contact Support */}
-        <div className="bg-gradient-to-br from-red-50 to-red-100/50 rounded-2xl p-8 text-center">
+        <div className="bg-primary/5 rounded-2xl p-8 text-center">
           <h2 className="text-2xl font-medium text-slate-800 mb-3 tracking-tight">Still need help?</h2>
           <p className="text-slate-600 mb-6">Our B2B support team is here to assist you with your business needs</p>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
             <div className="bg-white rounded-xl p-4 border border-slate-100">
-              <Mail className="w-6 h-6 text-blue-600 mx-auto mb-2" />
+              <Mail className="w-6 h-6 text-primary mx-auto mb-2" />
               <h3 className="font-medium text-slate-800 text-sm mb-1">Email Support</h3>
               <p className="text-xs text-slate-600 mb-3">Get detailed help via email</p>
-              <Button variant="outline" size="sm" className="w-full border-slate-200 hover:border-blue-300 hover:bg-blue-50">
+              <Button variant="outline" size="sm" className="w-full border-slate-200 hover:border-primary hover:bg-primary/10">
                 Email Us
               </Button>
             </div>

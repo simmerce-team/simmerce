@@ -1,158 +1,177 @@
-'use server';
+"use server";
 
-import { createClient } from '@/utils/supabase/server';
+import { createClient } from "@/utils/supabase/server";
 
-export interface ProductImage {
-  id: string;
-  url: string;
-  file_type: string;
-  is_primary: boolean;
-}
-
-export interface Product {
+export interface ProductItem {
   id: string;
   name: string;
   slug: string;
-  description: string | null;
   price: number;
   unit: string;
   moq: number;
-  stock_quantity: number;
-  address: string | null;
-  created_at: string;
-  files: ProductImage[];
-  business: {
-    id: string;
-    name: string;
-  };
-  category: {
-    id: string;
-    name: string;
-  } | null;
+  address: string;
+  image?: string;
+  business: string;
+  category: string;
 }
 
-export async function fetchFeaturedProducts(limit: number = 8, searchQuery?: string): Promise<Product[]> {
+export async function fetchFeaturedProducts(
+  limit: number = 8,
+  searchQuery?: string
+): Promise<ProductItem[]> {
   const supabase = await createClient();
-  
+
   let query = supabase
-    .from('products')
-    .select(`
-      *,
-      business:businesses(id, name, address),
-      category:categories(id, name),
-      files:product_files(id, url, file_type, is_primary)
-    `)
-    .eq('is_active', true);
+    .from("products")
+    .select(
+      `
+      id, name, slug, price, unit, moq,
+      business:businesses(name, city:cities(name, state:states(name))),
+      category:categories(name),
+      files:product_files(url)
+    `
+    )
+    .eq("is_active", true)
+    .eq("product_files.is_primary", true);
 
   // Add search condition if searchQuery is provided
   if (searchQuery && searchQuery.trim()) {
-    query = query.ilike('name', `%${searchQuery.trim()}%`);
+    query = query.ilike("name", `%${searchQuery.trim()}%`);
   }
 
   const { data: products, error } = await query
-    .order('created_at', { ascending: false })
+    .order("created_at", { ascending: false })
     .limit(limit);
 
   if (error) {
-    console.error('Error fetching featured products:', error);
+    console.error("Error fetching featured products:", error);
     return [];
   }
 
   // Transform the data to match our interface
-  return (products || []).map(product => ({
+  return (products || []).map((product) => ({
     ...product,
     price: Number(product.price),
-    files: product.files || [],
-    category: product.category || null,
-    address: product.business?.address || null,
+    image: product.files?.[0]?.url,
+    business: (product.business as any)?.name || "",
+    category: (product.category as any)?.name || "",
+    address: [
+      (product.business as any)?.city?.name,
+      (product.business as any)?.city?.state?.name,
+    ]
+      .filter(Boolean)
+      .join(", "),
   }));
 }
 
-
-export async function fetchProductsByLocation(location: string, limit: number = 8): Promise<Product[]> {
+export async function fetchProductsByLocation(
+  location: string,
+  limit: number = 8
+): Promise<ProductItem[]> {
   const supabase = await createClient();
-  
+
   // First, get the city ID from the location name
   const { data: cityData, error: cityError } = await supabase
-    .from('cities')
-    .select('id')
-    .ilike('name', `%${location}%`)
+    .from("cities")
+    .select("id")
+    .ilike("name", `%${location}%`)
     .single();
 
   if (cityError || !cityData) {
-    console.error('Error finding city:', cityError);
+    console.error("Error finding city:", cityError);
     return [];
   }
 
   // Then get businesses in that city
   const { data: businesses, error: businessesError } = await supabase
-    .from('businesses')
-    .select('id')
-    .eq('city_id', cityData.id);
+    .from("businesses")
+    .select("id")
+    .eq("city_id", cityData.id);
 
   if (businessesError || !businesses || businesses.length === 0) {
-    console.error('Error finding businesses in city:', businessesError);
+    console.error("Error finding businesses in city:", businessesError);
     return [];
   }
 
-  const businessIds = businesses.map(b => b.id);
+  const businessIds = businesses.map((b) => b.id);
 
   // Finally, get products from those businesses
   const { data: products, error: productsError } = await supabase
-    .from('products')
-    .select(`
-      *,
-      business:businesses(id, name, address),
-      category:categories(id, name),
-      files:product_files(id, url, file_type, is_primary)
-    `)
-    .in('business_id', businessIds)
-    .eq('is_active', true)
-    .order('created_at', { ascending: false })
+    .from("products")
+    .select(
+      `
+      id, name, slug, price, unit, moq,
+      business:businesses(name, city:cities(name, state:states(name))),
+      category:categories(name),
+      files:product_files(url)
+    `
+    )
+    .in("business_id", businessIds)
+    .eq("is_active", true)
+    .eq("product_files.is_primary", true)
+    .order("created_at", { ascending: false })
     .limit(limit);
 
   if (productsError) {
-    console.error('Error fetching products by location:', productsError);
+    console.error("Error fetching products by location:", productsError);
     return [];
   }
 
   // Transform the data to match our interface
-  return (products || []).map(product => ({
+  return (products || []).map((product) => ({
     ...product,
     price: Number(product.price),
-    files: product.files || [],
-    category: product.category || null,
-    address: product.business.address || null,
+    image: product.files?.[0]?.url,
+    business: (product.business as any)?.name || "",
+    category: (product.category as any)?.name || "",
+    address: [
+      (product.business as any)?.city?.name,
+      (product.business as any)?.city?.state?.name,
+    ]
+      .filter(Boolean)
+      .join(", "),
   }));
 }
 
-export async function fetchProductsByCategory(category: string, limit: number = 8): Promise<Product[]> {
+export async function fetchProductsByCategory(
+  category: string,
+  limit: number = 8
+): Promise<ProductItem[]> {
   const supabase = await createClient();
-  
+
   const { data: products, error: productsError } = await supabase
-    .from('products')
-    .select(`
-      *,
-      business:businesses(id, name, address),
-      category:categories(id, name),
-      files:product_files(id, url, file_type, is_primary)
-    `)
-    .eq('category.name', category)
-    .eq('is_active', true)
-    .order('created_at', { ascending: false })
+    .from("products")
+    .select(
+      `
+      id, name, slug, price, unit, moq,
+      business:businesses(name, city:cities(name, state:states(name))),
+      category:categories(name),
+      files:product_files(url)
+    `
+    )
+    .eq("category.name", category)
+    .eq("is_active", true)
+    .eq("product_files.is_primary", true)
+    .order("created_at", { ascending: false })
     .limit(limit);
 
   if (productsError) {
-    console.error('Error fetching products by category:', productsError);
+    console.error("Error fetching products by category:", productsError);
     return [];
   }
 
   // Transform the data to match our interface
-  return (products || []).map(product => ({
+  return (products || []).map((product) => ({
     ...product,
     price: Number(product.price),
-    files: product.files || [],
-    category: product.category || null,
-    address: product.business.address || null,
+    image: product.files?.[0]?.url,
+    business: (product.business as any)?.name || "",
+    category: (product.category as any)?.name || "",
+    address: [
+      (product.business as any)?.city?.name,
+      (product.business as any)?.city?.state?.name,
+    ]
+      .filter(Boolean)
+      .join(", "),
   }));
 }

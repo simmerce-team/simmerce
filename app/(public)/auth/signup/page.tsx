@@ -1,42 +1,63 @@
-"use client"
+"use client";
 
-import { signUp } from "@/actions/auth"
-import { PasswordInput } from "@/components/password-input"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { zodResolver } from "@hookform/resolvers/zod"
-import Link from "next/link"
-import { useRouter, useSearchParams } from "next/navigation"
-import { Suspense, useEffect } from "react"
-import { useForm } from "react-hook-form"
-import { toast } from "sonner"
-import * as z from "zod"
+import { signUp } from "@/actions/auth";
+import { ReferrerCheck } from "@/components/auth/referrer-check";
+import { PasswordInput } from "@/components/password-input";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import * as z from "zod";
 
-const formSchema = z.object({
-  name: z.string().min(3, {
-    message: "Name must be at least 3 characters long.",
-  }),
-  email: z.string().email({
-    message: "Please enter a valid email address.",
-  }),
-  password: z.string().min(8, {
-    message: "Password must be at least 8 characters long.",
-  }),
-  confirmPassword: z.string().min(8, {
-    message: "Please confirm your password.",
-  }),
-  phone: z.string().optional(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords do not match",
-  path: ["confirmPassword"],
-})
+const formSchema = z
+  .object({
+    name: z.string().min(3, {
+      message: "Name must be at least 3 characters long.",
+    }),
+    email: z.string().email({
+      message: "Please enter a valid email address.",
+    }),
+    password: z.string().min(8, {
+      message: "Password must be at least 8 characters long.",
+    }),
+    confirmPassword: z.string().min(8, {
+      message: "Please confirm your password.",
+    }),
+    phone: z.string()
+      .min(10, { message: "Phone number must be exactly 10 digits" })
+      .max(10, { message: "Phone number must be exactly 10 digits" })
+      .regex(/^[1-9]\d{9}$/, {
+        message: "Phone number must be 10 digits and not start with 0"
+      }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
 
 function SignupForm() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const email = searchParams.get('email') || ''
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const email = searchParams.get("email") || "";
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -47,30 +68,28 @@ function SignupForm() {
       confirmPassword: "",
       phone: "",
     },
-  })
+  });
 
   // Update form when email changes
   useEffect(() => {
     if (email) {
-      form.setValue('email', email)
+      form.setValue("email", email);
     }
-  }, [email, form])
+  }, [email, form]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const formData = new FormData()
-    formData.append('name', values.name)
-    formData.append('email', values.email)
-    formData.append('password', values.password)
-    if (values.phone) {
-      formData.append('phone', values.phone)
-    }
+    const formData = new FormData();
+    formData.append("name", values.name);
+    formData.append("email", values.email);
+    formData.append("password", values.password);
+    formData.append("phone", values.phone);
 
-    const { error } = await signUp(formData)
-    
+    const { error } = await signUp(formData);
+
     if (error) {
-      toast.error(error)
+      toast.error(error);
     } else {
-      router.push('/auth')
+      router.push("/auth");
     }
   }
 
@@ -105,10 +124,10 @@ function SignupForm() {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="you@example.com" 
-                      type="email" 
-                      {...field} 
+                    <Input
+                      placeholder="you@example.com"
+                      type="email"
+                      {...field}
                       disabled={!!email}
                     />
                   </FormControl>
@@ -136,7 +155,10 @@ function SignupForm() {
                 <FormItem>
                   <FormLabel>Confirm Password</FormLabel>
                   <FormControl>
-                    <PasswordInput placeholder="Confirm your password" {...field} />
+                    <PasswordInput
+                      placeholder="Confirm your password"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -147,27 +169,29 @@ function SignupForm() {
               name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Phone (Optional)</FormLabel>
+                  <FormLabel>Phone</FormLabel>
                   <FormControl>
-                    <Input type="tel" {...field} />
+                    <Input type="tel" placeholder="Enter your phone number" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button 
-              type="submit" 
-              className="w-full" 
+            <Button
+              type="submit"
+              className="w-full"
               disabled={form.formState.isSubmitting}
             >
-              {form.formState.isSubmitting ? 'Creating account...' : 'Create Account'}
+              {form.formState.isSubmitting
+                ? "Creating account..."
+                : "Create Account"}
             </Button>
           </form>
         </Form>
         <div className="mt-4 text-center text-sm">
           Already have an account?{" "}
-          <Link 
-            href="/auth/login" 
+          <Link
+            href="/auth/login"
             className="font-medium text-primary hover:underline"
           >
             Sign in
@@ -175,27 +199,23 @@ function SignupForm() {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
 
 export default function SignupPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
-      <Suspense fallback={
-        <Card className="w-full max-w-md p-8">
-          <div className="space-y-4">
-            <div className="h-10 w-3/4 animate-pulse rounded bg-gray-200"></div>
-            <div className="h-4 w-1/2 animate-pulse rounded bg-gray-200"></div>
-            <div className="space-y-2 pt-4">
-              <div className="h-10 w-full animate-pulse rounded bg-gray-200"></div>
-              <div className="h-10 w-full animate-pulse rounded bg-gray-200"></div>
-              <div className="h-10 w-full animate-pulse rounded bg-gray-200"></div>
-            </div>
-          </div>
+    <Suspense
+      fallback={
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <CardTitle>Loading...</CardTitle>
+          </CardHeader>
         </Card>
-      }>
+      }
+    >
+      <ReferrerCheck>
         <SignupForm />
-      </Suspense>
-    </div>
-  )
+      </ReferrerCheck>
+    </Suspense>
+  );
 }

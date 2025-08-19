@@ -97,7 +97,7 @@ export const Footer = ({
   copyright = `© ${new Date().getFullYear()} Simmerce. All rights reserved.`,
 }: Footer7Props) => {
   return (
-    <section className="pt-16 pb-8 bg-slate-50/30">
+    <section className="hidden md:block pt-16 pb-8 bg-slate-50/30">
       <div className="container mx-auto px-6 max-w-7xl">
         <div className="flex w-full flex-col justify-between gap-12 lg:flex-row lg:items-start lg:text-left">
           <div className="flex w-full flex-col justify-between gap-8 lg:items-start lg:max-w-sm">
@@ -120,12 +120,12 @@ export const Footer = ({
               {socialLinks.map((social, idx) => (
                 <li
                   key={idx}
-                  className="text-slate-500 hover:text-red-600 transition-colors"
+                  className="text-slate-500 hover:text-primary transition-colors"
                 >
                   <a
                     href={social.href}
                     aria-label={social.label}
-                    className="block p-2 rounded-lg hover:bg-red-50 transition-all"
+                    className="block p-2 rounded-lg hover:bg-primary/10 transition-all"
                   >
                     {social.icon}
                   </a>
@@ -144,7 +144,7 @@ export const Footer = ({
                     <li key={linkIdx}>
                       <Link
                         href={link.href}
-                        className="text-slate-600 hover:text-red-600 transition-colors font-medium"
+                        className="text-slate-600 hover:text-primary transition-colors font-medium"
                       >
                         {link.name}
                       </Link>
@@ -160,13 +160,13 @@ export const Footer = ({
           <div className="flex items-center gap-4 order-1 lg:order-2">
             <Link
               href="/privacy"
-              className="text-slate-500 hover:text-red-600 transition-colors font-medium"
+              className="text-slate-500 hover:text-primary transition-colors font-medium"
             >
               Privacy Policy
             </Link>
             <Link
               href="/terms"
-              className="text-slate-500 hover:text-red-600 transition-colors font-medium"
+              className="text-slate-500 hover:text-primary transition-colors font-medium"
             >
               Terms of Use
             </Link>

@@ -1,11 +1,19 @@
 import { createClient } from '@/utils/supabase/server';
-import { ProductImage } from './products';
+
+export interface ProductImage {
+  id: string;
+  url: string;
+  file_type: string;
+  is_primary: boolean;
+  display_order: number;
+}
 
 export interface Product {
   id: string;
   name: string;
   slug: string;
-  description: Record<string, any> | null;
+  description?: string | null;
+  specifications?: Record<string, any> | null;
   price: number;
   unit: string;
   moq: number;

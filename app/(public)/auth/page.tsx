@@ -55,7 +55,7 @@ function AuthForm() {
       
       if (!exists) {
         // New user, redirect to signup with email
-        router.push(`/auth/signup?email=${encodeURIComponent(values.email)}`)
+        router.push(`/auth/signup?email=${encodeURIComponent(values.email)}&redirectedFrom=${encodeURIComponent(redirectedFrom)}`)
       } else {
         // Existing user, redirect to login with email and redirect back
         router.push(`/auth/login?email=${encodeURIComponent(values.email)}&redirectedFrom=${encodeURIComponent(redirectedFrom)}`)

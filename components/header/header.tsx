@@ -1,3 +1,4 @@
+import { BottomNav } from "@/components/navigation/bottom-nav";
 import { DesktopHeader } from "./desktop-header";
 import { MobileHeader } from "./mobile-header";
 
@@ -17,7 +18,7 @@ export function Header() {
       </header>
 
       {/* Bottom Navigation - Only shown on mobile */}
-      {/* <BottomNav /> */}
+      <BottomNav />
     </>
   );
 }

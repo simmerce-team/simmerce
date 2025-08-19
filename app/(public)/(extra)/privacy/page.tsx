@@ -163,8 +163,8 @@ export default function PrivacyPage() {
         </div>
 
         {/* Contact Section */}
-        <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-2xl p-8 text-center">
-          <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+        <div className="bg-primary/5 rounded-2xl p-8 text-center">
+          <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
             <Mail className="w-6 h-6 text-white" />
           </div>
           <h3 className="text-xl font-medium text-slate-800 mb-3 tracking-tight">Questions About Privacy?</h3>
@@ -175,14 +175,14 @@ export default function PrivacyPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a 
               href="mailto:privacy@simmerce.com" 
-              className="inline-flex items-center justify-center px-6 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors"
+              className="inline-flex items-center justify-center px-6 py-3 bg-primary text-white rounded-xl font-medium hover:bg-primary/80 transition-colors"
             >
               <Mail className="w-4 h-4 mr-2" />
               Email Privacy Team
             </a>
             <a 
               href="/help" 
-              className="inline-flex items-center justify-center px-6 py-3 bg-white text-blue-600 border border-blue-200 rounded-xl font-medium hover:bg-blue-50 transition-colors"
+              className="inline-flex items-center justify-center px-6 py-3 bg-white text-primary border border-primary rounded-xl font-medium hover:bg-primary/10 transition-colors"
             >
               Visit Help Center
             </a>

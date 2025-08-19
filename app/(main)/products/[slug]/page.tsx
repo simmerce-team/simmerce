@@ -1,26 +1,13 @@
 import { getProductById } from "@/actions/product";
-import { EnquiryButton } from "@/components/product/enquiry-button";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { formatDistanceToNow } from "date-fns";
-import {
-  Building2,
-  Calendar,
-  MapPin,
-  Package,
-  XCircle
-} from "lucide-react";
+import { XCircle } from "lucide-react";
 import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { DetailCard } from "./_component/detail_card";
 import { ImageArea } from "./_component/image_area";
+import { ProductHeader } from "./_component/product_header";
+import { SellerCard } from "./_component/seller_card";
 
 type Params = Promise<{ slug: string }>;
 
@@ -100,10 +87,6 @@ const ProductDetailPage = async ({ params }: { params: Params }) => {
   // ];
 
   // const shareUrl = `${process.env.NEXT_PUBLIC_APP_URL}/products/${slug}`;
-  const memberSince = product.business?.created_at
-    ? new Date(product.business.created_at).getFullYear()
-    : null;
-
   return (
     <div className="min-h-screen bg-slate-50/30 py-4 md:py-8">
       <div className="container mx-auto px-4 max-w-7xl">
@@ -130,152 +113,13 @@ const ProductDetailPage = async ({ params }: { params: Params }) => {
           {/* Right Column - Product Info */}
           <div className="lg:col-span-2 space-y-6">
             {/* Product Header */}
-            <Card>
-              <CardHeader>
-                <div className="flex justify-between items-start">
-                  <div>
-                    <CardTitle>{product.name}</CardTitle>
-                    {product.business?.address && (
-                      <CardDescription className="mt-1 flex items-center">
-                        <MapPin className="w-4 h-4 mr-1" />
-                        {product.business.address}
-                      </CardDescription>
-                    )}
-                  </div>
-                  <Badge variant="outline" className="hidden sm:flex">
-                    <Package className="w-4 h-4 mr-1" />
-                    {product.category?.name || "Uncategorized"}
-                  </Badge>
-                </div>
-              </CardHeader>
-
-              <CardContent className="pt-0">
-                {/* Pricing */}
-                <div className="mb-2">
-                  <div className="flex items-baseline space-x-2 mb-2">
-                    <span className="text-3xl font-bold text-slate-900">
-                      ₹{product.price.toLocaleString()}
-                    </span>
-                    <span className="text-lg text-slate-600">
-                      / {product.unit}
-                    </span>
-                  </div>
-
-                  <div className="space-y-2 text-sm text-slate-700">
-                    <p className="flex items-center">
-                      <span className="font-medium min-w-[120px]">
-                        Minimum Order:
-                      </span>
-                      <span>
-                        {product.moq.toLocaleString()} {product.unit}
-                      </span>
-                    </p>
-                    {product.updated_at && (
-                      <p className="flex items-center text-slate-500 text-xs mt-2">
-                        <Calendar className="w-3 h-3 mr-1" />
-                        Updated{" "}
-                        {formatDistanceToNow(new Date(product.updated_at), {
-                          addSuffix: true,
-                        })}
-                      </p>
-                    )}
-                  </div>
-                  
-                  {/* Enquiry Button */}
-                  {product.business && <EnquiryButton 
-                    productId={product.id}
-                    sellerId={product.business.id}
-                    productName={product.name}
-                  />}
-                </div>
-              </CardContent>
-            </Card>
+            <ProductHeader product={product} />
 
             {/* Product Details */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Product Details</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {product.description ? (
-                  typeof product.description === "string" ? (
-                    <div
-                      className="prose prose-slate max-w-none"
-                      dangerouslySetInnerHTML={{ __html: product.description }}
-                    />
-                  ) : (
-                    <div className="space-y-3">
-                      {Object.entries(product.description).map(
-                        ([key, value]) => (
-                          <div
-                            key={key}
-                            className="flex gap-4 py-2 border-b border-slate-100 last:border-0 last:pb-0"
-                          >
-                            <span className="font-medium text-slate-700 min-w-[120px]">
-                              {key}:
-                            </span>
-                            <span className="text-slate-600">
-                              {String(value)}
-                            </span>
-                          </div>
-                        )
-                      )}
-                    </div>
-                  )
-                ) : (
-                  <p className="text-slate-500 italic">
-                    No description available for this product.
-                  </p>
-                )}
-              </CardContent>
-            </Card>
+            <DetailCard product={product} />
 
             {/* Seller Information */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Seller Information</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-col sm:flex-row justify-between gap-6">
-                  <div className="flex items-start space-x-4">
-                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                      <Building2 className="w-6 h-6 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="font-medium text-lg text-slate-900">
-                        {product.business?.name || "Business Name"}
-                      </h3>
-                      <div className="mt-1 space-y-1">
-                        {product.business?.address && (
-                          <p className="text-sm text-slate-600 flex items-center">
-                            <MapPin className="w-3.5 h-3.5 mr-1.5 flex-shrink-0" />
-                            <span className="truncate max-w-[200px]">
-                              {product.business.address}
-                            </span>
-                          </p>
-                        )}
-                        {memberSince && (
-                          <p className="text-sm text-slate-500 flex items-center">
-                            <Calendar className="w-3.5 h-3.5 mr-1.5 flex-shrink-0" />
-                            Member since {memberSince}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex flex-col sm:flex-row gap-3 sm:self-center">
-                    <Link
-                      href={`/sellers/${product.business?.slug || "#"}`}
-                      className="w-full sm:w-auto"
-                    >
-                      <Button variant="outline" className="w-full">
-                        View Profile
-                      </Button>
-                    </Link>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <SellerCard product={product} />
           </div>
         </div>
       </div>

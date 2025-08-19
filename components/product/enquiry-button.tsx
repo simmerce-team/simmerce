@@ -38,7 +38,7 @@ export function EnquiryButton({ productId, sellerId, productName }: EnquiryButto
       const returnUrl = searchParams.toString()
         ? `${window.location.pathname}?${searchParams.toString()}`
         : window.location.pathname
-      router.push(`/auth/login?redirectedFrom=${encodeURIComponent(returnUrl)}`)
+      router.push(`/auth?redirectedFrom=${encodeURIComponent(returnUrl)}`)
       return
     }
     setIsOpen(true)

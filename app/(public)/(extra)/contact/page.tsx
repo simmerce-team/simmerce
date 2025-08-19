@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
+import { MessageCircle } from "lucide-react";
 
 export default function ContactPage() {
   return (
@@ -20,7 +20,7 @@ export default function ContactPage() {
             <Card className="border-slate-200">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <MessageCircle className="w-5 h-5 text-red-600" />
+                  <MessageCircle className="w-5 h-5 text-primary" />
                   Send us a Message
                 </CardTitle>
                 <p className="text-sm text-slate-600">
@@ -82,7 +82,7 @@ export default function ContactPage() {
 
                 <Button
                   type="submit"
-                  className="w-full bg-red-600 hover:bg-red-700"
+                  className="w-full bg-primary hover:bg-primary/90"
                 >
                   Send Message
                 </Button>
@@ -91,7 +91,7 @@ export default function ContactPage() {
           </div>
 
           {/* Contact Information */}
-          <Card className="border-slate-200">
+          {/* <Card className="border-slate-200">
             <CardHeader>
               <CardTitle className="text-lg">Contact Information</CardTitle>
               <p className="text-sm text-slate-600">
@@ -100,8 +100,8 @@ export default function ContactPage() {
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="flex items-start gap-3">
-                <div className="p-2 bg-red-50 rounded-lg">
-                  <Mail className="h-5 w-5 text-red-600" />
+                <div className="p-2 bg-primary/10 rounded-lg">
+                  <Mail className="h-5 w-5 text-primary" />
                 </div>
                 <div>
                   <h3 className="font-medium text-slate-900">Email Us</h3>
@@ -110,7 +110,7 @@ export default function ContactPage() {
                   </p>
                   <a
                     href="mailto:contact@simmerce.com"
-                    className="text-sm text-red-600 hover:underline"
+                    className="text-sm text-primary hover:underline"
                   >
                     contact@simmerce.com
                   </a>
@@ -118,15 +118,15 @@ export default function ContactPage() {
               </div>
 
               <div className="flex items-start gap-3">
-                <div className="p-2 bg-red-50 rounded-lg">
-                  <Phone className="h-5 w-5 text-red-600" />
+                <div className="p-2 bg-primary/10 rounded-lg">
+                  <Phone className="h-5 w-5 text-primary" />
                 </div>
                 <div>
                   <h3 className="font-medium text-slate-900">Call Us</h3>
                   <p className="text-sm text-slate-600">For urgent inquiries</p>
                   <a
                     href="tel:+911234567890"
-                    className="text-sm text-red-600 hover:underline"
+                    className="text-sm text-primary hover:underline"
                   >
                     +91 12345 67890
                   </a>
@@ -137,13 +137,13 @@ export default function ContactPage() {
               </div>
 
               <div className="flex items-start gap-3">
-                <div className="p-2 bg-red-50 rounded-lg">
-                  <MapPin className="h-5 w-5 text-red-600" />
+                <div className="p-2 bg-primary/10 rounded-lg">
+                  <MapPin className="h-5 w-5 text-primary" />
                 </div>
                 <div>
                   <h3 className="font-medium text-slate-900">Our Office</h3>
                   <p className="text-sm text-slate-600">
-                    Simmerce Technologies Pvt. Ltd.
+                    Simmerce Pvt. Ltd.
                   </p>
                   <p className="text-sm text-slate-600">
                     123 Business Park, Sector 44
@@ -154,7 +154,7 @@ export default function ContactPage() {
                 </div>
               </div>
             </CardContent>
-          </Card>
+          </Card> */}
         </div>
       </div>
     </div>

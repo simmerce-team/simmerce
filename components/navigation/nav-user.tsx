@@ -46,7 +46,7 @@ export default function NavUser() {
       <Button
         variant="outline"
         size="sm"
-        className="h-9 w-9 rounded-full border-slate-200 p-0"
+        className="h-9 w-9 border-slate-200 p-0"
         disabled
       >
         <UserIcon className="h-4 w-4" />
@@ -69,7 +69,7 @@ export default function NavUser() {
           <Button
             variant="outline"
             size="sm"
-            className="h-9 w-9 rounded-full border-slate-200 p-0"
+            className="h-9 w-9 border-slate-200 p-0"
           >
             <UserIcon className="h-4 w-4" />
           </Button>

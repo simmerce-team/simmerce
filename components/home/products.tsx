@@ -1,11 +1,11 @@
 "use client";
 
-import { fetchFeaturedProducts, Product } from "@/actions/products";
+import { fetchFeaturedProducts, ProductItem } from "@/actions/products";
 import { useEffect, useState } from "react";
 import { ProductCard } from "../product/product-card";
 
 export function ProductsSection() {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<ProductItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

@@ -1,15 +1,30 @@
 "use client";
 
-import { Product } from "@/actions/products";
+import { ProductItem } from "@/actions/products";
 import { ProductCard } from "@/components/product/product-card";
+import Link from "next/link";
 
 interface SellerProductsProps {
-  products: Product[];
+  products: ProductItem[];
+  slug: string;
 }
 
-export function SellerProducts({ products }: SellerProductsProps) {
+export function SellerProducts({ products, slug }: SellerProductsProps) {
   return (
-    <>
+    <div className="mt-12">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="md:text-xl font-semibold text-foreground">
+          Products ({products.length})
+        </h2>
+        {products.length > 4 && (
+          <Link
+            href={`/sellers/${slug}/products`}
+            className="text-sm font-medium text-primary hover:underline"
+          >
+            View all products
+          </Link>
+        )}
+      </div>
       {products.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {products.map((product) => (
@@ -41,6 +56,6 @@ export function SellerProducts({ products }: SellerProductsProps) {
           </p>
         </div>
       )}
-    </>
+    </div>
   );
 }
