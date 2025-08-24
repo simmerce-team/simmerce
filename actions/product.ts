@@ -1,4 +1,5 @@
 import { createClient } from '@/utils/supabase/server';
+import { cache } from 'react';
 
 export interface ProductImage {
   id: string;
@@ -52,7 +53,7 @@ export interface _Category {
   icon_url: string | null;
 }
 
-export async function getProductById(slug: string): Promise<Product | null> {
+export const getProductById = cache(async function getProductById(slug: string): Promise<Product | null> {
   const supabase = await createClient();
   
   const { data: product, error } = await supabase
@@ -90,14 +91,23 @@ export async function getProductById(slug: string): Promise<Product | null> {
     created_at: product.business.created_at
   } : null;
 
+  // Ensure primary files come first, then by display_order
+  const sortedFiles = (product.files || []).slice().sort((a: { is_primary: any; display_order: any; }, b: { is_primary: any; display_order: any; }) => {
+    if (a.is_primary !== b.is_primary) return a.is_primary ? -1 : 1;
+    const ao = (a.display_order ?? Number.MAX_SAFE_INTEGER);
+    const bo = (b.display_order ?? Number.MAX_SAFE_INTEGER);
+    if (ao !== bo) return ao - bo;
+    return 0;
+  });
+
   return {
     ...product,
     price: Number(product.price),
-    files: product.files || [],
+    files: sortedFiles,
     category: product.category || null,
     business: formattedBusiness,
   };
-}
+});
 
 export async function incrementProductViewCount(productId: string): Promise<void> {
   const supabase = await createClient();

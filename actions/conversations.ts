@@ -1,6 +1,8 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/server";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 export type Conversation = {
   id: string;
@@ -14,6 +16,11 @@ export type Message = {
   sender_id: string;
   message_content: string;
   created_at: string;
+};
+
+export type SendEnquiryState = {
+  ok: boolean;
+  error?: string;
 };
 
 export async function getUserConversations(userId: string): Promise<{
@@ -184,5 +191,69 @@ export async function sendMessage(
       data: null,
       error: error instanceof Error ? error.message : "Failed to send message",
     };
+  }
+}
+
+export async function sendEnquiry(
+  _prevState: SendEnquiryState,
+  formData: FormData
+): Promise<SendEnquiryState> {
+  const supabase = await createClient();
+
+  // Get current user
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const pathname = (formData.get("pathname") as string) || "/";
+  const search = (formData.get("search") as string) || "";
+  const returnUrl = search ? `${pathname}?${search}` : pathname;
+
+  if (!user) {
+    redirect(`/auth?redirectedFrom=${encodeURIComponent(returnUrl)}`);
+  }
+
+  const productId = formData.get("productId") as string;
+  const sellerId = formData.get("sellerId") as string; // business_id
+  const message = (formData.get("message") as string)?.trim();
+
+  if (!productId || !sellerId || !message) {
+    return { ok: false, error: "Missing required fields." };
+  }
+
+  try {
+    const { data: conversation, error: convError } = await supabase
+      .from("conversations")
+      .insert({
+        buyer_id: user!.id,
+        seller_business_id: sellerId,
+        product_id: productId,
+        status: "open",
+      })
+      .select()
+      .single();
+
+    if (convError || !conversation) {
+      console.error("Error creating conversation:", convError);
+      return { ok: false, error: "Could not create conversation." };
+    }
+
+    const { error: msgError } = await supabase.from("conversation_messages").insert({
+      conversation_id: conversation.id,
+      sender_id: user!.id,
+      message_type: "text",
+      message_content: message,
+    });
+
+    if (msgError) {
+      console.error("Error sending message:", msgError);
+      return { ok: false, error: "Could not send message." };
+    }
+
+    revalidatePath("/enquiries");
+    redirect("/enquiries");
+  } catch (e) {
+    console.error("sendEnquiry error:", e);
+    return { ok: false, error: "Unexpected error." };
   }
 }

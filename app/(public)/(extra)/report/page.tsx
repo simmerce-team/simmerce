@@ -3,15 +3,20 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { AlertTriangle, Camera, Shield } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Report an Issue | Simmerce",
+  description: "Help us maintain a safe and trustworthy B2B marketplace by reporting issues you encounter on Simmerce.",
+  alternates: { canonical: "/report" },
+  openGraph: {
+    url: "/report",
+    title: "Report an Issue | Simmerce",
+    description: "Help us maintain a safe and trustworthy B2B marketplace by reporting issues you encounter on Simmerce.",
+  },
+};
 
 export default function ReportPage() {
   return (
@@ -43,147 +48,140 @@ export default function ReportPage() {
               kept confidential.
             </p>
           </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <CardContent>
+            <form className="space-y-6" method="post" action="#">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="name" className="text-sm font-medium text-slate-700 mb-2 block">
+                    Your Name (Optional)
+                  </label>
+                  <Input id="name" name="name" placeholder="Enter your name" />
+                </div>
+                <div>
+                  <label htmlFor="email" className="text-sm font-medium text-slate-700 mb-2 block">
+                    Email Address
+                  </label>
+                  <Input id="email" name="email" type="email" placeholder="your.email@company.com" required />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="issue_category" className="text-sm font-medium text-slate-700 mb-2 block">
+                    Issue Category *
+                  </label>
+                  <select
+                    id="issue_category"
+                    name="issue_category"
+                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                    required
+                    defaultValue=""
+                  >
+                    <option value="" disabled>
+                      Select issue type
+                    </option>
+                    <option value="fraudulent-supplier">Fraudulent Supplier</option>
+                    <option value="fake-products">Fake Products/Misleading Info</option>
+                    <option value="payment-fraud">Payment Fraud</option>
+                    <option value="spam-messages">Spam Messages/Calls</option>
+                    <option value="inappropriate-content">Inappropriate Content</option>
+                    <option value="technical-issue">Technical Issue</option>
+                    <option value="account-security">Account Security</option>
+                    <option value="data-privacy">Data Privacy Concern</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label htmlFor="urgency" className="text-sm font-medium text-slate-700 mb-2 block">
+                    Urgency Level
+                  </label>
+                  <select
+                    id="urgency"
+                    name="urgency"
+                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                    defaultValue=""
+                  >
+                    <option value="" disabled>
+                      Select urgency
+                    </option>
+                    <option value="low">Low - General inquiry</option>
+                    <option value="medium">Medium - Affects my business</option>
+                    <option value="high">High - Urgent business impact</option>
+                    <option value="critical">Critical - Security/Fraud concern</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="company" className="text-sm font-medium text-slate-700 mb-2 block">
+                  Supplier/Company Name (If applicable)
+                </label>
+                <Input id="company" name="company" placeholder="Enter supplier or company name" />
+              </div>
+
+              <div>
+                <label htmlFor="product_url" className="text-sm font-medium text-slate-700 mb-2 block">
+                  Product/Service URL (If applicable)
+                </label>
+                <Input id="product_url" name="product_url" placeholder="https://simmerce.com/product/..." />
+              </div>
+
+              <div>
+                <label htmlFor="description" className="text-sm font-medium text-slate-700 mb-2 block">
+                  Detailed Description *
+                </label>
+                <Textarea
+                  id="description"
+                  name="description"
+                  placeholder="Please provide a detailed description of the issue, including what happened, when it occurred, and any relevant details..."
+                  className="min-h-[120px]"
+                  required
+                />
+              </div>
+
               <div>
                 <label className="text-sm font-medium text-slate-700 mb-2 block">
-                  Your Name (Optional)
+                  Supporting Evidence
                 </label>
-                <Input placeholder="Enter your name" />
+                <div className="border-2 border-dashed border-slate-300 rounded-lg p-6 text-center">
+                  <Camera className="w-8 h-8 text-slate-400 mx-auto mb-2" />
+                  <p className="text-sm text-slate-600 mb-2">
+                    Upload screenshots, documents, or other evidence
+                  </p>
+                  <Button type="button" variant="outline" size="sm">
+                    Choose Files
+                  </Button>
+                  <p className="text-xs text-slate-500 mt-2">
+                    Max 5 files, 10MB each. Formats: JPG, PNG, PDF, DOC
+                  </p>
+                </div>
               </div>
-              <div>
-                <label className="text-sm font-medium text-slate-700 mb-2 block">
-                  Email Address
+
+              <div className="flex items-center gap-2">
+                <input type="checkbox" id="anonymous" name="anonymous" className="rounded" />
+                <label htmlFor="anonymous" className="text-sm text-slate-600">
+                  Submit this report anonymously
                 </label>
-                <Input type="email" placeholder="your.email@company.com" />
               </div>
-            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm font-medium text-slate-700 mb-2 block">
-                  Issue Category *
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="updates"
+                  className="rounded"
+                  defaultChecked
+                  name="updates"
+                />
+                <label htmlFor="updates" className="text-sm text-slate-600">
+                  Send me updates about this report
                 </label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select issue type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="fraudulent-supplier">
-                      Fraudulent Supplier
-                    </SelectItem>
-                    <SelectItem value="fake-products">
-                      Fake Products/Misleading Info
-                    </SelectItem>
-                    <SelectItem value="payment-fraud">Payment Fraud</SelectItem>
-                    <SelectItem value="spam-messages">
-                      Spam Messages/Calls
-                    </SelectItem>
-                    <SelectItem value="inappropriate-content">
-                      Inappropriate Content
-                    </SelectItem>
-                    <SelectItem value="technical-issue">
-                      Technical Issue
-                    </SelectItem>
-                    <SelectItem value="account-security">
-                      Account Security
-                    </SelectItem>
-                    <SelectItem value="data-privacy">
-                      Data Privacy Concern
-                    </SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
-                  </SelectContent>
-                </Select>
               </div>
 
-              <div>
-                <label className="text-sm font-medium text-slate-700 mb-2 block">
-                  Urgency Level
-                </label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select urgency" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="low">Low - General inquiry</SelectItem>
-                    <SelectItem value="medium">
-                      Medium - Affects my business
-                    </SelectItem>
-                    <SelectItem value="high">
-                      High - Urgent business impact
-                    </SelectItem>
-                    <SelectItem value="critical">
-                      Critical - Security/Fraud concern
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div>
-              <label className="text-sm font-medium text-slate-700 mb-2 block">
-                Supplier/Company Name (If applicable)
-              </label>
-              <Input placeholder="Enter supplier or company name" />
-            </div>
-
-            <div>
-              <label className="text-sm font-medium text-slate-700 mb-2 block">
-                Product/Service URL (If applicable)
-              </label>
-              <Input placeholder="https://simmerce.com/product/..." />
-            </div>
-
-            <div>
-              <label className="text-sm font-medium text-slate-700 mb-2 block">
-                Detailed Description *
-              </label>
-              <Textarea
-                placeholder="Please provide a detailed description of the issue, including what happened, when it occurred, and any relevant details..."
-                className="min-h-[120px]"
-              />
-            </div>
-
-            <div>
-              <label className="text-sm font-medium text-slate-700 mb-2 block">
-                Supporting Evidence
-              </label>
-              <div className="border-2 border-dashed border-slate-300 rounded-lg p-6 text-center">
-                <Camera className="w-8 h-8 text-slate-400 mx-auto mb-2" />
-                <p className="text-sm text-slate-600 mb-2">
-                  Upload screenshots, documents, or other evidence
-                </p>
-                <Button variant="outline" size="sm">
-                  Choose Files
-                </Button>
-                <p className="text-xs text-slate-500 mt-2">
-                  Max 5 files, 10MB each. Formats: JPG, PNG, PDF, DOC
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <input type="checkbox" id="anonymous" className="rounded" />
-              <label htmlFor="anonymous" className="text-sm text-slate-600">
-                Submit this report anonymously
-              </label>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                id="updates"
-                className="rounded"
-                defaultChecked
-              />
-              <label htmlFor="updates" className="text-sm text-slate-600">
-                Send me updates about this report
-              </label>
-            </div>
-
-            <Button className="w-full bg-red-600 hover:bg-red-700">
-              Submit Report
-            </Button>
+              <Button type="submit" className="w-full bg-red-600 hover:bg-red-700">
+                Submit Report
+              </Button>
+            </form>
           </CardContent>
         </Card>
       </div>

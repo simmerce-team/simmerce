@@ -1,8 +1,8 @@
 'use client';
 
 import { Product } from "@/actions/product";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Images } from "@/utils/constant";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -52,6 +52,13 @@ const getYoutubeEmbedUrl = (url: string | null): string | null => {
   
   return videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0` : null;
 };
+
+// Dynamically import the video dialog to defer iframe code until needed
+const VideoDialog = dynamic(() => import("./video_dialog"), {
+  // keep minimal loader; dialog appears almost instantly after chunk loads
+  loading: () => null,
+  ssr: false,
+});
 
 export const ImageArea = ({ product }: { product: Product }) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -156,41 +163,28 @@ export const ImageArea = ({ product }: { product: Product }) => {
           ))}
 
           {videoId && (
-            <YouTubeThumbnail 
-              videoId={videoId} 
-              onClick={() => setShowYoutubeDialog(true)} 
-            />
+            <div
+              role="listitem"
+              onMouseEnter={() => import('./video_dialog')}
+            >
+              <YouTubeThumbnail 
+                videoId={videoId} 
+                onClick={() => setShowYoutubeDialog(true)} 
+              />
+            </div>
           )}
         </div>
       )}
 
-      {/* YouTube Dialog */}
-      <Dialog open={showYoutubeDialog} onOpenChange={setShowYoutubeDialog}>
-        <DialogContent className="max-w-4xl p-0 bg-transparent border-none shadow-none">
-          <div className="relative w-full aspect-video">
-            <button 
-              onClick={() => setShowYoutubeDialog(false)}
-              className="absolute -top-10 right-0 text-white hover:text-gray-300 z-10 focus:outline-none focus:ring-2 focus:ring-white rounded"
-              aria-label="Close video"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-            {embedUrl && (
-              <iframe
-                src={embedUrl}
-                className="w-full h-full rounded-lg"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                title={`${product.name} video`}
-                loading="lazy"
-              />
-            )}
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* YouTube Dialog - dynamically loaded */}
+      {showYoutubeDialog && embedUrl && (
+        <VideoDialog
+          open={showYoutubeDialog}
+          onOpenChange={setShowYoutubeDialog}
+          embedUrl={embedUrl}
+          title={`${product.name} video`}
+        />
+      )}
     </div>
   );
 };

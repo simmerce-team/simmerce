@@ -1,10 +1,10 @@
-
+import { Product } from "@/actions/product";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Building2, Calendar, MapPin } from "lucide-react";
 import Link from "next/link";
 
-export const SellerCard = ({ product }: { product: any }) => {
+export const SellerCard = ({ product }: { product: Product }) => {
   const memberSince = product.business?.created_at
     ? new Date(product.business.created_at).getFullYear()
     : null;

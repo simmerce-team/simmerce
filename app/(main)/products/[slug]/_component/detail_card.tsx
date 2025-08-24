@@ -1,7 +1,8 @@
+import { Product } from "@/actions/product";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-export const DetailCard = ({ product }: { product: any }) => {
+export const DetailCard = ({ product }: { product: Product }) => {
   return (
     <Card>
       <Tabs defaultValue="description" className="w-full">

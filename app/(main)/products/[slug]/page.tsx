@@ -1,8 +1,5 @@
 import { getProductById } from "@/actions/product";
-import { Button } from "@/components/ui/button";
-import { XCircle } from "lucide-react";
 import { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { DetailCard } from "./_component/detail_card";
 import { ImageArea } from "./_component/image_area";
@@ -28,6 +25,7 @@ export async function generateMetadata({
         title: "Product Not Found | Simmerce",
         description:
           "The product you're looking for doesn't exist or has been removed.",
+        alternates: { canonical: `/products/${slug}` },
       };
     }
 
@@ -36,7 +34,9 @@ export async function generateMetadata({
       description: product.description
         ? String(product.description).substring(0, 160)
         : `Explore ${product.name} on Simmerce`,
+      alternates: { canonical: `/products/${slug}` },
       openGraph: {
+        url: `/products/${slug}`,
         images: [
           {
             url: product.files?.[0]?.url || "/placeholder-product.jpg",
@@ -51,6 +51,7 @@ export async function generateMetadata({
     return {
       title: "Product | Simmerce",
       description: "Explore this product on Simmerce",
+      alternates: { canonical: `/products/${slug}` },
     };
   }
 }
@@ -64,17 +65,36 @@ const ProductDetailPage = async ({ params }: { params: Params }) => {
     product = await getProductById(slug);
   } catch (error) {
     console.error("Error fetching product:", error);
-    return (
-      <ErrorState
-        title="Error Loading Product"
-        message="There was an error loading this product. Please try again later."
-      />
-    );
+    throw error;
   }
 
   if (!product) {
     notFound();
   }
+
+  // Construct canonical URL and JSON-LD schema
+  const canonicalPath = `/products/${slug}`;
+  const canonicalUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? ""}${canonicalPath}`;
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    image: product.files?.[0]?.url ? [product.files[0].url] : undefined,
+    description: product.description ?? undefined,
+    brand: product.business?.name
+      ? { "@type": "Brand", name: product.business.name }
+      : undefined,
+    offers: {
+      "@type": "Offer",
+      priceCurrency: "INR",
+      price: product.price,
+      url: canonicalUrl || canonicalPath,
+      availability:
+        (product as any).stock_quantity > 0
+          ? "https://schema.org/InStock"
+          : "https://schema.org/OutOfStock",
+    },
+  };
 
   // const features = [
   //   {
@@ -90,6 +110,11 @@ const ProductDetailPage = async ({ params }: { params: Params }) => {
   return (
     <div className="min-h-screen bg-slate-50/30 py-4 md:py-8">
       <div className="container mx-auto px-4 max-w-7xl">
+        <script
+          type="application/ld+json"
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
           {/* Left Column - Product Images */}
           <div className="lg:col-span-1 space-y-6">
@@ -126,28 +151,5 @@ const ProductDetailPage = async ({ params }: { params: Params }) => {
     </div>
   );
 };
-
-// Error state component
-function ErrorState({ title, message }: { title: string; message: string }) {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50/30 p-4">
-      <div className="text-center max-w-md w-full">
-        <div className="mx-auto w-16 h-16 rounded-full bg-red-50 flex items-center justify-center mb-4">
-          <XCircle className="w-10 h-10 text-red-500" />
-        </div>
-        <h1 className="text-2xl font-semibold text-slate-800 mb-2">{title}</h1>
-        <p className="text-slate-600 mb-6">{message}</p>
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Button asChild>
-            <Link href="/products">Browse Products</Link>
-          </Button>
-          <Button variant="outline" asChild>
-            <Link href="/">Back to Home</Link>
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export default ProductDetailPage;

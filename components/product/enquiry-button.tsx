@@ -1,5 +1,6 @@
 "use client"
 
+import { sendEnquiry, type SendEnquiryState } from "@/actions/conversations"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -12,101 +13,65 @@ import {
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { useAuth } from "@/context/AuthContext"
-import { createClient } from "@/utils/supabase/client"
-import { useRouter, useSearchParams } from "next/navigation"
-import { useState } from "react"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import { useActionState, useEffect, useState } from "react"
+import { useFormStatus } from "react-dom"
 import { toast } from "sonner"
 
 type EnquiryButtonProps = {
   productId: string
-  sellerId: string  // This should be the business_id, not user_id
+  sellerId: string // business_id
   productName: string
+}
+
+function SubmitButton() {
+  const { pending } = useFormStatus()
+  return (
+    <Button type="submit" disabled={pending}>
+      {pending ? "Sending..." : "Send Enquiry"}
+    </Button>
+  )
 }
 
 export function EnquiryButton({ productId, sellerId, productName }: EnquiryButtonProps) {
   const { user, isLoading } = useAuth()
   const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
   const [isOpen, setIsOpen] = useState(false)
   const [message, setMessage] = useState("")
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const searchParams = useSearchParams()
-  const supabase = createClient()
+
+  // Server Action state
+  const initialState: SendEnquiryState = { ok: false }
+  const [state, formAction] = useActionState(sendEnquiry, initialState)
+
+  // Surface server errors (no success toast because we redirect on success)
+  useEffect(() => {
+    if (state?.error) {
+      toast.error(state.error)
+    }
+  }, [state?.error])
 
   const handleEnquiryClick = () => {
     if (!user) {
-      // Redirect to login with return URL
+      // Fast client redirect to login; server action also handles it as a fallback
       const returnUrl = searchParams.toString()
-        ? `${window.location.pathname}?${searchParams.toString()}`
-        : window.location.pathname
-      router.push(`/auth?redirectedFrom=${encodeURIComponent(returnUrl)}`)
+        ? `${pathname}?${searchParams.toString()}`
+        : pathname
+      router.push(`/auth?redirectedFrom=${encodeURIComponent(returnUrl || "/")}`)
       return
     }
     setIsOpen(true)
   }
 
-  const handleSubmit = async () => {
-    if (!message.trim()) {
-      toast.error("Please enter your enquiry message")
-      return
-    }
-
-    if (!user) {
-      toast.error("Please log in to send an enquiry")
-      return
-    }
-
-    try {
-      setIsSubmitting(true)
-
-      // 1. Create a new conversation
-      const { data: conversation, error: convError } = await supabase
-        .from('conversations')
-        .insert({
-          buyer_id: user.id,
-          seller_business_id: sellerId,
-          product_id: productId,
-          status: 'open'
-        })
-        .select()
-        .single()
-
-      if (convError) throw convError
-
-      // 2. Add the first message to the conversation
-      const { error: msgError } = await supabase
-        .from('conversation_messages')
-        .insert({
-          conversation_id: conversation.id,
-          sender_id: user.id,
-          message_type: 'text',
-          message_content: message
-        })
-
-      if (msgError) throw msgError
-      
-      toast.success("Enquiry sent successfully!")
-      setIsOpen(false)
-      setMessage("")
-      
-      // Optionally, redirect to the messages page
-      router.push('/enquiries')
-      
-    } catch (error) {
-      console.error('Error sending enquiry:', error)
-      toast.error("Failed to send enquiry. Please try again.")
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
-
   return (
     <>
-      <Button 
+      <Button
         onClick={handleEnquiryClick}
         className="w-full mt-4"
         disabled={isLoading}
       >
-        {isLoading ? 'Loading...' : 'Enquire Now'}
+        {isLoading ? "Loading..." : "Enquire Now"}
       </Button>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -117,36 +82,42 @@ export function EnquiryButton({ productId, sellerId, productName }: EnquiryButto
               Send a message to the seller about: <span className="font-medium">{productName}</span>
             </DialogDescription>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
+
+          <form action={formAction} className="grid gap-4 py-4">
+            {/* Hidden fields for server action */}
+            <input type="hidden" name="productId" value={productId} />
+            <input type="hidden" name="sellerId" value={sellerId} />
+            <input type="hidden" name="pathname" value={pathname || "/"} />
+            <input type="hidden" name="search" value={searchParams.toString()} />
+
             <div className="grid gap-2">
               <Label htmlFor="message">Your Message</Label>
               <Textarea
                 id="message"
+                name="message"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="I'm interested in this product. Could you please provide more details about..."
                 className="min-h-[120px]"
+                required
+                minLength={2}
               />
             </div>
-          </div>
-          <DialogFooter>
-            <Button 
-              variant="outline" 
-              onClick={() => {
-                setIsOpen(false)
-                setMessage("")
-              }}
-              disabled={isSubmitting}
-            >
-              Cancel
-            </Button>
-            <Button 
-              onClick={handleSubmit}
-              disabled={isSubmitting || !message.trim()}
-            >
-              {isSubmitting ? 'Sending...' : 'Send Enquiry'}
-            </Button>
-          </DialogFooter>
+
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setIsOpen(false)
+                  setMessage("")
+                }}
+              >
+                Cancel
+              </Button>
+              <SubmitButton />
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
     </>

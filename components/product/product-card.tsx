@@ -1,5 +1,3 @@
-"use client";
-
 import { ProductItem } from "@/actions/products";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
