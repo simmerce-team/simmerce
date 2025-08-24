@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { Home, Menu, MessageCircle, User } from "lucide-react";
+import { Home, MessageCircle, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -23,12 +23,6 @@ export function BottomNav() {
       icon: <Home className="h-5 w-5" />,
       activeIcon: <Home className="h-5 w-5 fill-current" />,
       matchExact: true,
-    },
-    {
-      name: "Categories",
-      href: "/categories",
-      icon: <Menu className="h-5 w-5" />,
-      activeIcon: <Menu className="h-5 w-5 fill-current" />,
     },
     {
       name: "Messages",
@@ -62,25 +56,13 @@ export function BottomNav() {
               href={item.href}
               className={cn(
                 "group flex flex-1 flex-col items-center justify-center py-2 text-xs font-medium transition-colors duration-200",
-                active
-                  ? "text-red-600"
-                  : "text-gray-600 hover:text-gray-900"
+                active ? "text-primary" : "text-gray-600 hover:text-gray-900"
               )}
             >
               <div className="relative">
-                {active && item.activeIcon
-                  ? item.activeIcon
-                  : item.icon}
-                {item.name === "Cart" && (
-                  <span className="absolute -right-2 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
-                    3
-                  </span>
-                )}
+                {active && item.activeIcon ? item.activeIcon : item.icon}
               </div>
               <span className="mt-1">{item.name}</span>
-              {active && (
-                <div className="absolute -top-1 h-1 w-8 rounded-b-full bg-red-600" />
-              )}
             </Link>
           );
         })}

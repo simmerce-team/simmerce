@@ -60,7 +60,9 @@ const VideoDialog = dynamic(() => import("./video_dialog"), {
   ssr: false,
 });
 
-export const ImageArea = ({ product }: { product: Product }) => {
+type ImageAreaProps = { product: Product; renderHero?: boolean };
+
+export const ImageArea = ({ product, renderHero = true }: ImageAreaProps) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [showYoutubeDialog, setShowYoutubeDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -97,23 +99,26 @@ export const ImageArea = ({ product }: { product: Product }) => {
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-      {/* Main Image */}
-      <div className="aspect-square relative bg-gradient-to-br from-slate-50/50 to-slate-100/30">
-        <div className={`absolute inset-0 flex items-center justify-center ${isLoading ? 'block' : 'hidden'}`}>
-          <div className="animate-pulse bg-slate-200 w-full h-full" />
+      {/* Main Image (can be disabled to let server render hero for FCP) */}
+      {renderHero && (
+        <div className="aspect-square relative bg-gradient-to-br from-slate-50/50 to-slate-100/30">
+          <div className={`absolute inset-0 flex items-center justify-center ${isLoading ? 'block' : 'hidden'}`}>
+            <div className="animate-pulse bg-slate-200 w-full h-full" />
+          </div>
+          <Image
+            src={currentImage?.url || Images.placeholder}
+            alt={product?.name || 'Product image'}
+            fill
+            className={`object-cover transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            priority={selectedImageIndex === 0}
+            fetchPriority={selectedImageIndex === 0 ? 'high' : 'auto'}
+            loading={selectedImageIndex === 0 ? 'eager' : 'lazy'}
+            onLoad={handleImageLoad}
+            onError={() => setIsLoading(false)}
+          />
         </div>
-        <Image
-          src={currentImage?.url || Images.placeholder}
-          alt={product?.name || 'Product image'}
-          fill
-          className={`object-cover transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          priority={selectedImageIndex === 0}
-          onLoad={handleImageLoad}
-          onError={() => setIsLoading(false)}
-        />
-      </div>
-
+      )}
       {/* Thumbnail Gallery */}
       {(images.length > 1 || pdfs.length > 0 || videoId) && (
         <div className="m-5 grid grid-cols-4 gap-3" role="list" aria-label="Product thumbnails">
@@ -143,7 +148,6 @@ export const ImageArea = ({ product }: { product: Product }) => {
               />
             </div>
           ))}
-
           {pdfs.map((file) => (
             <a
               key={`pdf-${file.id}`}
@@ -161,7 +165,6 @@ export const ImageArea = ({ product }: { product: Product }) => {
               </div>
             </a>
           ))}
-
           {videoId && (
             <div
               role="listitem"
@@ -175,7 +178,6 @@ export const ImageArea = ({ product }: { product: Product }) => {
           )}
         </div>
       )}
-
       {/* YouTube Dialog - dynamically loaded */}
       {showYoutubeDialog && embedUrl && (
         <VideoDialog

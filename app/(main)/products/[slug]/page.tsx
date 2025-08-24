@@ -1,12 +1,17 @@
 import { getProductById } from "@/actions/product";
 import { Metadata } from "next";
+import Image from "next/image";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 import { DetailCard } from "./_component/detail_card";
 import { ImageArea } from "./_component/image_area";
 import { ProductHeader } from "./_component/product_header";
 import { SellerCard } from "./_component/seller_card";
 
 type Params = Promise<{ slug: string }>;
+
+// Cache product fetch per-request to dedupe calls between generateMetadata and page
+const getProductCached = cache(async (slug: string) => getProductById(slug));
 
 // Re-validate the page every 60 seconds
 export const revalidate = 60;
@@ -19,7 +24,7 @@ export async function generateMetadata({
   const slug = (await params).slug;
 
   try {
-    const product = await getProductById(slug);
+    const product = await getProductCached(slug);
     if (!product) {
       return {
         title: "Product Not Found | Simmerce",
@@ -62,7 +67,7 @@ const ProductDetailPage = async ({ params }: { params: Params }) => {
   let product;
 
   try {
-    product = await getProductById(slug);
+    product = await getProductCached(slug);
   } catch (error) {
     console.error("Error fetching product:", error);
     throw error;
@@ -75,6 +80,7 @@ const ProductDetailPage = async ({ params }: { params: Params }) => {
   // Construct canonical URL and JSON-LD schema
   const canonicalPath = `/products/${slug}`;
   const canonicalUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? ""}${canonicalPath}`;
+  const heroUrl = product.files?.[0]?.url || "/placeholder-product.jpg";
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -118,7 +124,24 @@ const ProductDetailPage = async ({ params }: { params: Params }) => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
           {/* Left Column - Product Images */}
           <div className="lg:col-span-1 space-y-6">
-            <ImageArea product={product} />
+            {/* Server-rendered hero image for faster FCP */}
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+              <div className="aspect-square relative bg-gradient-to-br from-slate-50/50 to-slate-100/30">
+                <Image
+                  src={heroUrl}
+                  alt={product.name}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 33vw"
+                  priority
+                  fetchPriority="high"
+                  loading="eager"
+                />
+              </div>
+            </div>
+
+            {/* Client gallery/video without rendering the hero again */}
+            <ImageArea product={product} renderHero={false} />
 
             {/* Features */}
             {/* <Card className="hidden md:block">
