@@ -32,13 +32,14 @@ export async function fetchCities(): Promise<City[]> {
   return cities || [];
 }
 
-export async function fetchCityWithBusinessCount(): Promise<CityWithBusinessCount[]> {
+export async function fetchCityWithBusinessCount({ limit }: { limit?: number }): Promise<CityWithBusinessCount[]> {
   const supabase = await createClient();
   
   const { data: cities, error } = await supabase
     .from('cities')
     .select('id, name, businesses(id)')
-    .order('name', { ascending: true });
+    .order('name', { ascending: true })
+    .limit(limit || 6);
 
   if (error) {
     console.error('Error fetching cities:', error);

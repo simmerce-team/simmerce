@@ -1,5 +1,9 @@
-import { ProductsSection } from '@/components/home/products';
-import { SellerCTA } from '@/components/home/seller-cta';
+import { CitiesSection } from "@/components/home/cities";
+import { CitiesSkeleton } from "@/components/home/cities_skeleton";
+import { ProductsSection } from "@/components/home/products";
+import { ProductsSkeleton } from "@/components/home/products_skeleton";
+import { SellerCTA } from "@/components/home/seller-cta";
+import { Suspense } from "react";
 
 export default function HomePage() {
   return (
@@ -8,13 +12,17 @@ export default function HomePage() {
       {/* <CategoriesSection /> */}
 
       {/* Featured Products */}
-      <ProductsSection />
+      <Suspense fallback={<ProductsSkeleton />}>
+        <ProductsSection />
+      </Suspense>
 
       {/* Seller CTA Section */}
       <SellerCTA />
 
       {/* Cities Section */}
-      {/* <CitiesSection /> */}
+      <Suspense fallback={<CitiesSkeleton count={6} />}>
+        <CitiesSection />
+      </Suspense>
     </div>
   );
 }

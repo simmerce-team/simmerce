@@ -1,5 +1,7 @@
-import { getBusinessById, getBusinessProducts } from "@/actions/business";
+import { getBusinessById } from "@/actions/business";
+import { ProductsSkeleton } from "@/components/home/products_skeleton";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import SellerDetail from "./seller-detail";
 import { SellerProducts } from "./seller-products";
 
@@ -18,26 +20,15 @@ export default async function SellerProfilePage({
     notFound();
   }
 
-  // Fetch business products
-  const products = await getBusinessProducts(business.id);
-
-  // Format business data for display
-  const seller = {
-    ...business,
-    memberSince: business.created_at
-      ? new Date(business.created_at).getFullYear()
-      : "N/A",
-    totalProducts: products.length,
-    businessType: business.business_type ? [business.business_type.name] : [],
-  };
-
   return (
     <div className="container mx-auto px-4 md:py-8">
       {/* Seller Header */}
-      <SellerDetail seller={seller} />
+      <SellerDetail seller={business} />
 
       {/* Products Section */}
-      <SellerProducts products={products} slug={slug} />
+      <Suspense fallback={<ProductsSkeleton count={8} />}>
+        <SellerProducts businessId={business.id} slug={slug} />
+      </Suspense>
     </div>
   );
 }

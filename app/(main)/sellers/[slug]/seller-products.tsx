@@ -1,15 +1,15 @@
-"use client";
-
-import { ProductItem } from "@/actions/products";
+import { getBusinessProducts } from "@/actions/business";
 import { ProductCard } from "@/components/product/product-card";
 import Link from "next/link";
 
 interface SellerProductsProps {
-  products: ProductItem[];
+  businessId: string;
   slug: string;
 }
 
-export function SellerProducts({ products, slug }: SellerProductsProps) {
+export async function SellerProducts({ businessId, slug }: SellerProductsProps) {
+  const products = await getBusinessProducts(businessId);
+
   return (
     <div className="mt-12">
       <div className="flex items-center justify-between mb-6">

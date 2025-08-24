@@ -1,19 +1,15 @@
-import { fetchCityWithBusinessCount } from "@/actions/cities";
-import { fetchProductsByLocation } from "@/actions/products";
+import { FeaturedProductsByCity } from "@/components/cities/featured-products";
+import { OtherCitiesList } from "@/components/cities/other-cities";
+import { CitiesSkeleton } from "@/components/home/cities_skeleton";
+import { ProductsSkeleton } from "@/components/home/products_skeleton";
 import { PageHeader } from "@/components/page-header";
-import { ProductCard } from "@/components/product/product-card";
 import Link from "next/link";
+import { Suspense } from "react";
 
 type Params = Promise<{ slug: string }>;
 
 export default async function CityPage({ params }: { params: Params }) {
   const { slug } = await params;
-
-  // Fetch data in parallel
-  const [cities, featuredProducts] = await Promise.all([
-    fetchCityWithBusinessCount(),
-    fetchProductsByLocation(slug),
-  ]);
 
   // Format the city name for display (capitalize first letter of each word)
   const formattedCityName = slug
@@ -25,76 +21,35 @@ export default async function CityPage({ params }: { params: Params }) {
     <div className="container mx-auto px-4 md:py-8 max-w-7xl">
       <PageHeader
         title={`Businesses in ${formattedCityName}`}
-        description={`Connect with ${featuredProducts.length}+ businesses in ${formattedCityName}`}
-        breadcrumbs={[
-          { name: "Home", href: "/" },
-          { name: "Cities", href: "/cities" },
-          { name: formattedCityName, href: `/cities/${slug}` },
-        ]}
+        description={`Discover suppliers, manufacturers, and wholesalers across ${formattedCityName}.`}
       />
 
       {/* Featured Products */}
       <section className="my-16">
-        {featuredProducts.length > 0 && (
-          <div className="flex justify-between items-center mb-8">
-            <h2 className="text-base md:text-2xl font-medium text-slate-800 tracking-tight">
-              Featured Products in {formattedCityName}
-            </h2>
-            <Link
-              href={`/products?location=${slug}`}
-              className="text-red-500 hover:text-red-600 text-sm font-medium transition-colors"
-            >
-              View all products
-            </Link>
-          </div>
-        )}
-        {featuredProducts.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-            {featuredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        ) : (
-          <p className="text-center">No products found in this city.</p>
-        )}
+        <div className="flex justify-between items-center mb-8">
+          <h2 className="text-base md:text-lg font-semibold text-slate-800 tracking-tight">
+            Featured Products in {formattedCityName}
+          </h2>
+          <Link
+            href={`/products?location=${slug}`}
+            className="hover:text-primary text-sm font-medium transition-colors"
+          >
+            View all products
+          </Link>
+        </div>
+        <Suspense fallback={<ProductsSkeleton count={8} />}> 
+          <FeaturedProductsByCity slug={slug} />
+        </Suspense>
       </section>
 
       {/* Other Cities */}
       <section className="mb-12">
-        <h2 className="md:text-2xl font-medium text-slate-800 mb-8 tracking-tight">
+        <h2 className="md:text-lg font-semibold text-slate-800 mb-8 tracking-tight">
           Explore Other Cities
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-          {cities
-            .filter((c) => c.name.toLowerCase() !== slug)
-            .slice(0, 3)
-            .map((city) => {
-              const citySlug = city.name.toLowerCase().replace(/\s+/g, "-");
-              return (
-                <Link
-                  key={city.id}
-                  href={`/cities/${citySlug}`}
-                  className="group block p-6 bg-white rounded-xl border border-slate-100 hover:border-slate-200 hover:shadow-lg transition-all duration-300"
-                >
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <h3 className="text-base md:text-xl font-medium text-slate-800 group-hover:text-red-600 transition-colors">
-                        {city.name}
-                      </h3>
-                      <p className="text-xs md:text-base text-slate-500 mt-1">
-                        {city.businessCount
-                          ? city.businessCount + "Businesses"
-                          : "No Businesses"}
-                      </p>
-                    </div>
-                    <span className="text-slate-400 group-hover:text-red-500 transition-colors">
-                      →
-                    </span>
-                  </div>
-                </Link>
-              );
-            })}
-        </div>
+        <Suspense fallback={<CitiesSkeleton count={6} />}> 
+          <OtherCitiesList />
+        </Suspense>
       </section>
     </div>
   );

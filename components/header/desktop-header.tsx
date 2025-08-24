@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Images } from "@/utils/constant";
 import { MessageCircleIcon } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { GlobalSearch } from "../global-search";
 import NavUser from "../navigation/nav-user";
@@ -14,9 +15,11 @@ export function DesktopHeader() {
       "
       >
         <Link href="/" className="flex items-center gap-3 text-slate-800">
-          <img
+          <Image
             src={Images.logo}
             alt="Simmerce"
+            width={40}
+            height={40}
             className="w-10 h-10 bg-slate-800 rounded-lg shadow-sm"
           />
           <div>
