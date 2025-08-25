@@ -13,9 +13,9 @@ export function SellerCTA() {
               <Badge className="bg-red-100 text-red-700 hover:bg-red-100 text-sm font-medium">
                 For Sellers
               </Badge>
-              <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900">
+              <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900">
                 Grow your business with Simmerce
-              </h2>
+              </h1>
               <p className="text-gray-600">
                 Join thousands of sellers who are growing their business with
                 our platform. List your products, reach more customers, and

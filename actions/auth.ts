@@ -121,7 +121,7 @@ export async function getUserRole(userId: string) {
     .from('users')
     .select('role')
     .eq('id', userId)
-    .single()
+    .maybeSingle()
 
   if (error) {
     console.error('Error fetching user role:', error)
@@ -137,7 +137,7 @@ export async function checkEmailExists(email: string) {
     .from('users')
     .select('email')
     .eq('email', email)
-    .single()
+    .maybeSingle()
 
   if (error && error.code !== 'PGRST116') { // Ignore 'not found' error
     console.error('Error checking email:', error)

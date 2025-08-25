@@ -16,7 +16,6 @@ export default function PrivacyPage() {
       content: [
         "Business identification information (company name, GSTIN, business registration)",
         "Contact details (name, email, phone number, business address)",
-        "Financial information for B2B transactions and credit verification",
         "Product and service information for supplier listings",
         "Communication records between buyers and suppliers",
         "Platform usage data and analytics for service improvement"
@@ -71,7 +70,7 @@ export default function PrivacyPage() {
         {/* Last Updated */}
         <div className="text-center mb-12">
           <Badge className="bg-slate-50 text-slate-600 border border-slate-200">
-            Last updated: July 25, 2025
+            Last updated: Aug 25, 2025
           </Badge>
         </div>
 

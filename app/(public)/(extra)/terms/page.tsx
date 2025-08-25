@@ -75,7 +75,7 @@ export default function TermsPage() {
         {/* Last Updated */}
         <div className="text-center mb-12">
           <Badge className="bg-slate-50 text-slate-600 border border-slate-200">
-            Last updated: July 25, 2025
+            Last updated: Aug 25, 2025
           </Badge>
         </div>
 

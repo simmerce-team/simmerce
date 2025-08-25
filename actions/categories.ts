@@ -6,26 +6,26 @@ export interface Category {
   id: string;
   name: string;
   slug: string;
-  icon_url: string | null;
   parent_id: string | null;
-  created_at: string;
-  subcategories?: Category[];
 }
 
-export interface Categories {
+export interface MegaMenuCategory {
   id: string;
   name: string;
-  icon_url: string | null;
-  subcategories: Category[];
+  slug: string;
+  subcategories: {
+    id: string;
+    name: string;
+    slug: string;
+  }[];
 }
 
-export async function fetchCategories(): Promise<Categories[]> {
+export async function fetchCategories(): Promise<Category[]> {
   const supabase = await createClient();
   
-  // Fetch all categories with their parent_id
   const { data: categories, error } = await supabase
     .from('categories')
-    .select('*')
+    .select('id, name, slug, parent_id')
     .order('name', { ascending: true });
 
   if (error) {
@@ -33,29 +33,7 @@ export async function fetchCategories(): Promise<Categories[]> {
     return [];
   }
 
-  // Separate parent categories (where parent_id is null) and subcategories
-  const parentCategories = categories.filter(cat => !cat.parent_id);
-  const subcategories = categories.filter(cat => !!cat.parent_id);
-
-  // Map parent categories and attach their subcategories
-  const categoriesWithSubcategories = parentCategories.map(parent => ({
-    id: parent.id,
-    name: parent.name,
-    icon_url: parent.icon_url,
-    subcategories: subcategories
-      .filter(sub => sub.parent_id === parent.id)
-      .map(sub => ({
-        id: sub.id,
-        name: sub.name,
-        slug: sub.slug,
-        icon_url: sub.icon_url,
-        parent_id: sub.parent_id,
-        created_at: sub.created_at
-      }))
-  }));
-  
-
-  return categoriesWithSubcategories;
+  return categories || [];
 }
 
 export async function fetchHomeCategories(): Promise<Category[]> {
@@ -63,7 +41,7 @@ export async function fetchHomeCategories(): Promise<Category[]> {
   
   const { data: categories, error } = await supabase
     .from('categories')
-    .select('*')
+    .select('id, name, slug, parent_id')
     .is('parent_id', null)
     .limit(10)
     .order('name', { ascending: true });
@@ -74,4 +52,57 @@ export async function fetchHomeCategories(): Promise<Category[]> {
   }
 
   return categories || [];
+}
+
+export async function fetchMegaMenuCategories(): Promise<MegaMenuCategory[]> {
+  const supabase = await createClient();
+
+  // 1) Fetch top-level categories (parents)
+  const { data: parents, error: parentsError } = await supabase
+    .from('categories')
+    .select('id, name, slug')
+    .is('parent_id', null)
+    .limit(10)
+    .order('name', { ascending: true });
+
+  if (parentsError) {
+    console.error('Error fetching parent categories:', parentsError);
+    return [];
+  }
+
+  if (!parents || parents.length === 0) {
+    return [];
+  }
+
+  const parentIds = parents.map((p) => p.id);
+
+  // 2) Fetch subcategories for those parents
+  const { data: children, error: childrenError } = await supabase
+    .from('categories')
+    .select('id, name, slug, parent_id')
+    .in('parent_id', parentIds)
+    .order('name', { ascending: true });
+
+  if (childrenError) {
+    console.error('Error fetching subcategories:', childrenError);
+  }
+
+  // 3) Group children by parent_id
+  const childrenByParent = new Map<string, { id: string; name: string; slug: string }[]>();
+  (children || []).forEach((c) => {
+    if (!c.parent_id) return;
+    const list = childrenByParent.get(c.parent_id) || [];
+    list.push({ id: c.id, name: c.name, slug: c.slug });
+    childrenByParent.set(c.parent_id, list);
+  });
+
+  // 4) Build MegaMenuCategory[] with subcategories populated
+  const megaMenuCategories: MegaMenuCategory[] = parents.map((p) => ({
+    id: p.id,
+    name: p.name,
+    slug: p.slug,
+    subcategories: childrenByParent.get(p.id) || [],
+  }));
+
+  return megaMenuCategories;
 }

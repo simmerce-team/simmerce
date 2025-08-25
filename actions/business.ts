@@ -24,17 +24,6 @@ export interface Business {
   };
 }
 
-export interface Businesses {
-  id: string;
-  name: string;
-  slug: string;
-  gst_number?: string | null;
-  verified: boolean;
-  description: string;
-  location: string;
-  businessType: string;
-}
-
 export async function getBusinessById(slug: string): Promise<Business | null> {
   const supabase = await createClient();
 
@@ -96,38 +85,5 @@ export async function getBusinessProducts(
     ]
       .filter(Boolean)
       .join(", "),
-  }));
-}
-
-export async function getBusinesses(
-  limit: number = 8
-): Promise<Businesses[] | null> {
-  const supabase = await createClient();
-
-  const { data: businesses, error } = await supabase
-    .from("businesses")
-    .select(
-      `
-      *,
-      city:cities(id, name, state:states(id, name)),
-      business_type:business_type_id (id, name)
-    `
-    )
-    .order("created_at", { ascending: false })
-    .limit(limit);
-
-  if (error) {
-    console.error("Error fetching businesses:", error);
-    return null;
-  }
-
-  return (businesses || []).map((business) => ({
-    ...business,
-    businessType: business.business_type?.name || "Business",
-    location: business.city
-      ? `${business.city.name}${
-          business.city.state?.name ? `, ${business.city.state.name}` : ""
-        }`
-      : "Location not specified",
   }));
 }

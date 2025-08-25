@@ -1,6 +1,6 @@
 "use client";
 
-import { Categories, fetchCategories } from "@/actions/categories";
+import type { MegaMenuCategory } from "@/actions/categories";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -10,37 +10,26 @@ import {
 } from "@/components/ui/navigation-menu";
 import { Images } from "@/utils/constant";
 import { ChevronRight } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
-import { SetStateAction, useEffect, useState } from "react";
+import { useState } from "react";
 
-export function MegaMenu() {
-  const [isOpen, setIsOpen] = useState(false);
+export function MegaMenuClient({
+  initialCategories,
+}: {
+  initialCategories: MegaMenuCategory[];
+}) {
   const [activeMenu, setActiveMenu] = useState("");
 
   const handleLinkClick = () => {
-    setIsOpen(false);
+    setActiveMenu("");
   };
 
-  const handleMenuChange = (value: SetStateAction<string>) => {
+  const handleMenuChange = (value: string) => {
     setActiveMenu(value);
-    setIsOpen(value !== "");
   };
 
-  const [categories, setCategories] = useState<Categories[]>([]);
-
-  useEffect(() => {
-    const loadCategories = async () => {
-      try {
-        const data = await fetchCategories();
-        setCategories(data);
-      } catch (error) {
-        console.error("Failed to load categories:", error);
-      }
-    };
-
-    loadCategories();
-  }, []);
-
+  const categories = initialCategories;
 
   return (
     <div className="hidden lg:flex">
@@ -54,65 +43,63 @@ export function MegaMenu() {
             <NavigationMenuContent className="!w-[600px]">
               <div className="max-h-[500px] overflow-y-auto p-6">
                 <div className="grid grid-cols-2 gap-6">
-                    {categories.map((category) => (
-                      <div key={category.id} className="space-y-3">
-                        <Link
-                          href={`/categories/${category.name
-                            .toLowerCase()
-                            .replace(" ", "-")}`}
-                          onClick={handleLinkClick}
-                          className="group flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 transition-colors"
-                        >
-                          <div className="w-10 h-10 bg-red-50 rounded-lg flex items-center justify-center group-hover:bg-red-100 transition-colors">
-                            <img
-                              src={category.icon_url || Images.placeholder}
-                              alt={category.name}
-                              className="w-6 h-6"
-                            />
-                          </div>
-                          <div>
-                            <h3 className="font-medium text-slate-900 group-hover:text-red-600 transition-colors">
-                              {category.name}
-                            </h3>
-                            <p className="text-xs text-slate-500">
-                              {category?.subcategories?.length || 0}{" "}
-                              subcategories
-                            </p>
-                          </div>
-                        </Link>
-
-                        {/* Subcategories */}
-                        <div className="ml-4 space-y-1">
-                          {category.subcategories?.slice(0, 4).map((sub) => (
-                            <Link
-                              key={sub.id}
-                              href={`/categories/${sub.name.toLowerCase().replace(" ", "-")}`}
-                              onClick={handleLinkClick}
-                              className="flex items-center justify-between text-sm text-slate-600 hover:text-red-600 hover:bg-red-50/50 px-2 py-1 rounded transition-colors group"
-                            >
-                              <span>{sub.name}</span>
-                              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                {/* <span className="text-xs text-slate-400">
-                                  {0}
-                                </span> */}
-                                <ChevronRight className="w-3 h-3" />
-                              </div>
-                            </Link>
-                          ))}
-                          {(category.subcategories?.length || 0) > 4 && (
-                            <Link
-                              href={`/categories/${category.name}`}
-                              onClick={handleLinkClick}
-                              className="text-xs text-red-600 hover:text-red-700 px-2 py-1 block"
-                            >
-                              View all {category.subcategories?.length}{" "}
-                              subcategories →
-                            </Link>
-                          )}
+                  {categories.map((category) => (
+                    <div key={category.id} className="space-y-3">
+                      <Link
+                        href={`/categories/${category.slug}`}
+                        prefetch={false}
+                        onClick={handleLinkClick}
+                        className="group flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 transition-colors"
+                      >
+                        <div className="w-10 h-10 bg-red-50 rounded-lg flex items-center justify-center group-hover:bg-red-100 transition-colors">
+                          <Image
+                            src={Images.placeholder}
+                            alt={category.name}
+                            width={24}
+                            height={24}
+                            className="w-6 h-6"
+                          />
                         </div>
+                        <div>
+                          <h3 className="font-medium text-slate-900 group-hover:text-red-600 transition-colors">
+                            {category.name}
+                          </h3>
+                          <p className="text-xs text-slate-500">
+                            {category?.subcategories?.length || 0} subcategories
+                          </p>
+                        </div>
+                      </Link>
+
+                      {/* Subcategories */}
+                      <div className="ml-4 space-y-1">
+                        {category.subcategories?.slice(0, 4).map((sub) => (
+                          <Link
+                            key={sub.id}
+                            href={`/categories/${sub.slug}`}
+                            prefetch={false}
+                            onClick={handleLinkClick}
+                            className="flex items-center justify-between text-sm text-slate-600 hover:text-red-600 hover:bg-red-50/50 px-2 py-1 rounded transition-colors group"
+                          >
+                            <span>{sub.name}</span>
+                            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <ChevronRight className="w-3 h-3" />
+                            </div>
+                          </Link>
+                        ))}
+                        {(category.subcategories?.length || 0) > 4 && (
+                          <Link
+                            href={`/categories/${category.slug}`}
+                            prefetch={false}
+                            onClick={handleLinkClick}
+                            className="text-xs text-red-600 hover:text-red-700 px-2 py-1 block"
+                          >
+                            View all subcategories →
+                          </Link>
+                        )}
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </NavigationMenuContent>
           </NavigationMenuItem>

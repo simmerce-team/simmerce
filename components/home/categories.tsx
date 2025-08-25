@@ -1,34 +1,21 @@
 "use client";
 
 import { Category, fetchHomeCategories } from "@/actions/categories";
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
 interface CategoryCardProps {
-  category: Category
+  category: Category;
 }
 
 function CategoryCard({ category }: CategoryCardProps) {
   return (
     <Link
-      href={`/categories/${category.name.toLowerCase().replace(' ', '-')}`}
+      href={`/categories/${category.name.toLowerCase().replace(" ", "-")}`}
       className="group flex flex-col items-center p-6 bg-white hover:bg-slate-50/50 rounded-xl transition-all duration-200 border border-slate-100 hover:border-slate-200"
     >
       <div className="w-14 h-14 mb-4 bg-slate-50 rounded-2xl flex items-center justify-center group-hover:bg-accent transition-colors">
-        {category.icon_url ? (
-          <Image
-            src={category.icon_url}
-            alt={category.name}
-            width={48}
-            height={48}
-            className="rounded-xl"
-          />
-        ) : (
-          <div className="w-12 h-12 bg-slate-200 rounded-xl flex items-center justify-center">
-            <span className="text-2xl">📦</span>
-          </div>
-        )}
+        <span className="text-2xl">📦</span>
       </div>
       <span className="text-sm font-medium text-slate-700 text-center group-hover:text-accent transition-colors">
         {category.name}

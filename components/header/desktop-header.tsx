@@ -4,6 +4,7 @@ import { MessageCircleIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { GlobalSearch } from "../global-search";
+import MegaMenu from "../navigation/mega-menu-server";
 import NavUser from "../navigation/nav-user";
 
 export function DesktopHeader() {
@@ -32,7 +33,8 @@ export function DesktopHeader() {
       </div>
 
       {/* Middle area - Search */}
-      <div className="flex-1 mx-8">
+      <div className="flex flex-1 items-center gap-4 mx-8">
+        <MegaMenu />
         <GlobalSearch />
       </div>
 

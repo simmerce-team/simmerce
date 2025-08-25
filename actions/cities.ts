@@ -5,9 +5,6 @@ import { createClient } from '@/utils/supabase/server';
 export interface City {
   id: string;
   name: string;
-  state: string | null;
-  country: string;
-  created_at: string;
 }
 
 export interface CityWithBusinessCount {
@@ -16,13 +13,14 @@ export interface CityWithBusinessCount {
   businessCount: number;
 }
 
-export async function fetchCities(): Promise<City[]> {
+export async function fetchCities({ limit }: { limit?: number }): Promise<City[]> {
   const supabase = await createClient();
   
   const { data: cities, error } = await supabase
     .from('cities')
-    .select('*')
-    .order('name', { ascending: true });
+    .select('id, name')
+    .order('name', { ascending: true })
+    .limit(limit ?? 6);
 
   if (error) {
     console.error('Error fetching cities:', error);
@@ -35,21 +33,21 @@ export async function fetchCities(): Promise<City[]> {
 export async function fetchCityWithBusinessCount({ limit }: { limit?: number }): Promise<CityWithBusinessCount[]> {
   const supabase = await createClient();
   
-  const { data: cities, error } = await supabase
-    .from('cities')
-    .select('id, name, businesses(id)')
-    .order('name', { ascending: true })
-    .limit(limit || 6);
+  const { data: rows, error } = await supabase
+  .from('cities')
+  .select('id, name, business_count:businesses(count)')
+  .order('name', { ascending: true })
+  .limit(limit ?? 6);
 
   if (error) {
     console.error('Error fetching cities:', error);
     return [];
   }
 
-  return cities.map(city => ({
-    id: city.id,
-    name: city.name,
-    businessCount: city.businesses.length
-  })) || [];
+  return (rows ?? []).map((r: any) => ({
+    id: r.id,
+    name: r.name,
+    businessCount: r.business_count?.[0]?.count ?? 0,
+  }));
 }
 

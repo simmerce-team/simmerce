@@ -36,6 +36,7 @@ export interface Business {
   name: string;
   slug: string;
   address: string | null;
+  created_at: string;
   city?: {
     id: string;
     name: string;
@@ -44,13 +45,11 @@ export interface Business {
       name: string;
     };
   };
-  created_at: string;
 }
 
 export interface _Category {
   id: string;
   name: string;
-  icon_url: string | null;
 }
 
 export const getProductById = cache(async function getProductById(slug: string): Promise<Product | null> {
@@ -67,7 +66,7 @@ export const getProductById = cache(async function getProductById(slug: string):
         created_at,
         city:cities(id, name, state:states(id, name))
       ),
-      category:categories(id, name, icon_url),
+      category:categories(id, name),
       files:product_files(id, url, file_type, is_primary, display_order)
     `)
     .eq('slug', slug)
@@ -108,24 +107,3 @@ export const getProductById = cache(async function getProductById(slug: string):
     business: formattedBusiness,
   };
 });
-
-export async function incrementProductViewCount(productId: string): Promise<void> {
-  const supabase = await createClient();
-  
-  try {
-    const { error } = await supabase.rpc('increment_product_views', {
-      product_id: productId
-    });
-    
-    if (error) {
-      console.error('Error incrementing view count:', error);
-      // Fallback to direct update if RPC fails
-      await supabase
-        .from('products')
-        .update({ view_count: supabase.rpc('increment') })
-        .eq('id', productId);
-    }
-  } catch (err) {
-    console.error('Failed to increment view count:', err);
-  }
-}

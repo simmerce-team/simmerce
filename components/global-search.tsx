@@ -17,14 +17,44 @@ export const GlobalSearch = () => {
   const [open, setOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const inputRef = useRef<HTMLInputElement>(null)
-  
-  const { products, isLoading, isSearching } = useSearch(searchQuery)
+  const [debouncedQuery, setDebouncedQuery] = useState("")
+  const [recentSearches, setRecentSearches] = useState<string[]>([])
+
+  const { products, isLoading /* isSearching */ } = useSearch(debouncedQuery)
 
   const toggleSearch = () => setOpen((open) => !open)
   const closeSearch = () => {
     setOpen(false)
     setSearchQuery("")
   }
+
+  // Load recent searches from localStorage once
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("simmerce_recent_searches")
+      if (raw) setRecentSearches(JSON.parse(raw))
+    } catch {}
+  }, [])
+
+  const saveRecentSearches = (list: string[]) => {
+    setRecentSearches(list)
+    try {
+      localStorage.setItem("simmerce_recent_searches", JSON.stringify(list))
+    } catch {}
+  }
+
+  const addRecentSearch = (q: string) => {
+    const query = q.trim()
+    if (!query) return
+    const next = [query, ...recentSearches.filter((s) => s !== query)].slice(0, 5)
+    saveRecentSearches(next)
+  }
+
+  // Debounce search input to reduce requests
+  useEffect(() => {
+    const id = setTimeout(() => setDebouncedQuery(searchQuery.trim()), 300)
+    return () => clearTimeout(id)
+  }, [searchQuery])
 
   // Handle keyboard shortcuts
   useEffect(() => {
@@ -46,6 +76,7 @@ export const GlobalSearch = () => {
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && searchQuery.trim()) {
       e.preventDefault()
+      addRecentSearch(searchQuery)
       router.push(`/products?search=${encodeURIComponent(searchQuery.trim())}`)
       closeSearch()
     }
@@ -61,6 +92,7 @@ export const GlobalSearch = () => {
   }, [open])
 
   const handleSelectProduct = (productId: string) => {
+    if (searchQuery.trim()) addRecentSearch(searchQuery)
     router.push(`/products/${productId}`)
     closeSearch()
   }
@@ -69,6 +101,10 @@ export const GlobalSearch = () => {
     <div className="relative w-full max-w-md">
       <div 
         onClick={toggleSearch}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleSearch(); } }}
+        aria-label="Open search"
         className="relative flex items-center w-full rounded-md border border-input bg-background p-2 md:px-4 md:py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 cursor-text"
       >
         <Search className="h-4 w-4 md:mr-2 text-muted-foreground" />
@@ -88,14 +124,14 @@ export const GlobalSearch = () => {
           className="border-0 focus:ring-0 focus:ring-offset-0"
         />
         <CommandList className="max-h-[400px] overflow-y-auto">
-          {isLoading  ? (
+          {isLoading && debouncedQuery ? (
             <div className="flex items-center justify-center py-8 text-sm text-muted-foreground">
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Searching...
             </div>
-          ) : products.length === 0 && searchQuery ? (
+          ) : products.length === 0 && debouncedQuery ? (
             <div className="py-6 text-center">
-              <p className="text-sm text-muted-foreground">No products found for "{searchQuery}"</p>
+              <p className="text-sm text-muted-foreground">No products found for "{debouncedQuery}"</p>
               <p className="text-xs text-muted-foreground mt-2">Press Enter to see all products</p>
             </div>
           ) : (
@@ -130,9 +166,21 @@ export const GlobalSearch = () => {
           )}
           
           {!searchQuery && (
-            <div className="py-6 text-center text-sm text-muted-foreground">
-              Type to search for products...
-            </div>
+            <>
+              {recentSearches.length > 0 ? (
+                <CommandGroup heading="Recent searches">
+                  {recentSearches.map((q) => (
+                    <CommandItem key={q} onSelect={() => setSearchQuery(q)}>
+                      {q}
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              ) : (
+                <div className="py-6 text-center text-sm text-muted-foreground">
+                  Type to search for products...
+                </div>
+              )}
+            </>
           )}
         </CommandList>
       </CommandDialog>
