@@ -1,7 +1,9 @@
 import { getUserConversations } from "@/actions/conversations";
+import { MobileHeader } from "@/components/header/mobile-header";
+import { BottomNav } from "@/components/navigation/bottom-nav";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import { EnquiriesClient } from "./enquiries-client";
+import { EnquiriesClient, EnquiriesList } from "./enquiries-client";
 
 export default async function EnquiriesPage() {
   const supabase = await createClient();
@@ -25,11 +27,20 @@ export default async function EnquiriesPage() {
   }
 
   return (
-    <div className="px-2 py-0">
-      <EnquiriesClient
-        initialConversations={conversations || []}
-        userId={user.id}
-      />
-    </div>
+    <>
+      <MobileHeader title="Enquiries" />
+      {/* Mobile: show list only; chat opens at /enquiries/[id] */}
+      <div className="md:hidden">
+        <EnquiriesList initialConversations={conversations || []} />
+      </div>
+      {/* Desktop: keep existing two-column experience */}
+      <div className="hidden md:block">
+        <EnquiriesClient
+          initialConversations={conversations || []}
+          userId={user.id}
+        />
+      </div>
+      <BottomNav />
+    </>
   );
 }

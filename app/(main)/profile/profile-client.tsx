@@ -62,52 +62,44 @@ export default function ProfileClient() {
   }
 
   return (
-    <div className="container mx-auto px-4">
-      <Card className="overflow-hidden">
-        <CardHeader className="border-b border-slate-100">
-          <CardTitle>Profile Information</CardTitle>
-          <CardDescription>
-            View and manage your personal details
-          </CardDescription>
-        </CardHeader>
+    <Card className="overflow-hidden m-4">
+      <CardHeader className="border-b border-slate-100">
+        <CardTitle>Profile Information</CardTitle>
+        <CardDescription>View and manage your personal details</CardDescription>
+      </CardHeader>
 
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="space-y-6">
-              <InfoItem
-                icon={User}
-                label="Full Name"
-                value={profile?.full_name || ""}
-              />
-              <InfoItem icon={Mail} label="Email" value={user.email || ""} />
-            </div>
-            <div className="space-y-6">
-              <InfoItem
-                icon={Phone}
-                label="Phone"
-                value={profile?.phone || ""}
-              />
-              <InfoItem
-                icon={Calendar}
-                label="Account Created"
-                value={format(new Date(user.created_at), "MMMM d, yyyy")}
-              />
-            </div>
+      <CardContent>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="space-y-6">
+            <InfoItem
+              icon={User}
+              label="Full Name"
+              value={profile?.full_name || ""}
+            />
+            <InfoItem icon={Mail} label="Email" value={user.email || ""} />
           </div>
-        </CardContent>
+          <div className="space-y-6">
+            <InfoItem icon={Phone} label="Phone" value={profile?.phone || ""} />
+            <InfoItem
+              icon={Calendar}
+              label="Account Created"
+              value={format(new Date(user.created_at), "MMMM d, yyyy")}
+            />
+          </div>
+        </div>
+      </CardContent>
 
-        <CardFooter className="md:hidden flex items-center justify-between border-t bg-slate-50/5">
-          <p className="text-sm text-slate-500">Click the button to sign out</p>
-          <Button
-            variant="destructive"
-            onClick={handleSignOut}
-            className="flex justify-center items-center gap-2"
-          >
-            <LogOut className="h-4 w-4" />
-            <span>Sign out</span>
-          </Button>
-        </CardFooter>
-      </Card>
-    </div>
+      <CardFooter className="md:hidden flex items-center justify-between border-t bg-slate-50/5">
+        <p className="text-sm text-slate-500">Click the button to sign out</p>
+        <Button
+          variant="destructive"
+          onClick={handleSignOut}
+          className="flex justify-center items-center gap-2"
+        >
+          <LogOut className="h-4 w-4" />
+          <span>Sign out</span>
+        </Button>
+      </CardFooter>
+    </Card>
   );
 }

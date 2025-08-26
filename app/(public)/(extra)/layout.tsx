@@ -1,5 +1,5 @@
 import { Footer } from "@/components/footer";
-import Header from "@/components/header/header";
+import { DesktopHeader } from "@/components/header/desktop-header";
 
 export default function ExtraLayout({
   children,
@@ -8,7 +8,7 @@ export default function ExtraLayout({
 }>) {
   return (
     <>
-      <Header />
+      <DesktopHeader />
       <main className="min-h-screen container mx-auto py-10">{children}</main>
       <Footer />
     </>

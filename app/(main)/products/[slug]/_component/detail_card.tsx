@@ -16,9 +16,10 @@ export const DetailCard = ({ product }: { product: Product }) => {
         <CardContent className="pt-6">
           <TabsContent value="description" className="m-0">
             {product.description ? (
-              <div className="prose prose-slate max-w-none">
-                {product.description}
-              </div>
+              <div
+                className="prose prose-slate max-w-none"
+                dangerouslySetInnerHTML={{ __html: product.description }}
+              />
             ) : (
               <p className="text-slate-500 italic">No description available.</p>
             )}

@@ -9,7 +9,9 @@ import NavUser from "../navigation/nav-user";
 
 export function DesktopHeader() {
   return (
-    <div className="hidden md:flex h-full items-center justify-between gap-6 max-w-7xl mx-auto w-full">
+    <header className="hidden md:block sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/60 h-[60px] md:h-[70px] px-4 md:px-8">
+    {/* Desktop Header - Shown on medium screens and up */}
+    <div className="flex h-full items-center justify-between gap-6 max-w-7xl mx-auto w-full">
       {/* Left side - Logo */}
       <div
         className="flex items-center gap-4
@@ -60,5 +62,6 @@ export function DesktopHeader() {
         <NavUser />
       </div>
     </div>
+    </header>
   );
 }

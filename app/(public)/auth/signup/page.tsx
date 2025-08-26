@@ -2,6 +2,7 @@
 
 import { signUp } from "@/actions/auth";
 import { ReferrerCheck } from "@/components/auth/referrer-check";
+import { Loading } from "@/components/loading";
 import { PasswordInput } from "@/components/password-input";
 import { Button } from "@/components/ui/button";
 import {
@@ -42,11 +43,12 @@ const formSchema = z
     confirmPassword: z.string().min(8, {
       message: "Please confirm your password.",
     }),
-    phone: z.string()
+    phone: z
+      .string()
       .min(10, { message: "Phone number must be exactly 10 digits" })
       .max(10, { message: "Phone number must be exactly 10 digits" })
       .regex(/^[1-9]\d{9}$/, {
-        message: "Phone number must be 10 digits and not start with 0"
+        message: "Phone number must be 10 digits and not start with 0",
       }),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -171,7 +173,11 @@ function SignupForm() {
                 <FormItem>
                   <FormLabel>Phone</FormLabel>
                   <FormControl>
-                    <Input type="tel" placeholder="Enter your phone number" {...field} />
+                    <Input
+                      type="tel"
+                      placeholder="Enter your phone number"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -204,15 +210,7 @@ function SignupForm() {
 
 export default function SignupPage() {
   return (
-    <Suspense
-      fallback={
-        <Card className="w-full max-w-md">
-          <CardHeader>
-            <CardTitle>Loading...</CardTitle>
-          </CardHeader>
-        </Card>
-      }
-    >
+    <Suspense fallback={<Loading />}>
       <ReferrerCheck>
         <SignupForm />
       </ReferrerCheck>

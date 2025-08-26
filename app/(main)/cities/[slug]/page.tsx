@@ -25,16 +25,16 @@ export default async function CityPage({ params }: { params: Params }) {
       />
 
       {/* Featured Products */}
-      <section className="my-16">
-        <div className="flex justify-between items-center mb-8">
+      <section className="md:my-16">
+        <div className="hidden md:flex justify-between items-center mb-8">
           <h2 className="text-base md:text-lg font-semibold text-slate-800 tracking-tight">
-            Featured Products in {formattedCityName}
+            Products in {formattedCityName}
           </h2>
           <Link
             href={`/products?location=${slug}`}
             className="hover:text-primary text-sm font-medium transition-colors"
           >
-            View all products
+            View all
           </Link>
         </div>
         <Suspense fallback={<ProductsSkeleton count={8} />}> 

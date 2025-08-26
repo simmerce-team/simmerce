@@ -1,14 +1,14 @@
-"use client"
+"use client";
 
-import { checkEmailExists } from "@/actions/auth"
-import { Button } from "@/components/ui/button"
+import { checkEmailExists } from "@/actions/auth";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -16,53 +16,61 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useRouter, useSearchParams } from "next/navigation"
-import { Suspense, useEffect } from "react"
-import { useForm } from "react-hook-form"
-import { toast } from "sonner"
-import * as z from "zod"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import * as z from "zod";
 
 const formSchema = z.object({
-  email: z.string().email({
+  email: z.email({
     message: "Please enter a valid email address.",
   }),
-})
+});
 
 function AuthForm() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const redirectedFrom = searchParams.get('redirectedFrom') || '/'
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectedFrom = searchParams.get("redirectedFrom") || "/";
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
     },
-  })
+  });
 
   // Update form when redirectedFrom changes
   useEffect(() => {
     // This effect ensures we have the latest redirectedFrom value
     // when the form is submitted
-  }, [searchParams])
+  }, [searchParams]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const { exists } = await checkEmailExists(values.email)
-      
+      const { exists } = await checkEmailExists(values.email);
+
       if (!exists) {
         // New user, redirect to signup with email
-        router.push(`/auth/signup?email=${encodeURIComponent(values.email)}&redirectedFrom=${encodeURIComponent(redirectedFrom)}`)
+        router.push(
+          `/auth/signup?email=${encodeURIComponent(
+            values.email
+          )}&redirectedFrom=${encodeURIComponent(redirectedFrom)}`
+        );
       } else {
         // Existing user, redirect to login with email and redirect back
-        router.push(`/auth/login?email=${encodeURIComponent(values.email)}&redirectedFrom=${encodeURIComponent(redirectedFrom)}`)
+        router.push(
+          `/auth/login?email=${encodeURIComponent(
+            values.email
+          )}&redirectedFrom=${encodeURIComponent(redirectedFrom)}`
+        );
       }
     } catch (error) {
-      console.error("Error checking email:", error)
-      toast.error("An error occurred. Please try again.")
+      console.error("Error checking email:", error);
+      toast.error("An error occurred. Please try again.");
     }
   }
 
@@ -95,8 +103,8 @@ function AuthForm() {
                 </FormItem>
               )}
             />
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               className="w-full"
               disabled={form.formState.isSubmitting}
             >
@@ -106,13 +114,13 @@ function AuthForm() {
         </Form>
       </CardContent>
     </Card>
-  )
+  );
 }
 
 export default function AuthPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
-      <Suspense fallback={
+    <Suspense
+      fallback={
         <Card className="w-full max-w-md p-8">
           <div className="space-y-4">
             <div className="h-10 w-3/4 animate-pulse rounded bg-gray-200"></div>
@@ -123,9 +131,9 @@ export default function AuthPage() {
             </div>
           </div>
         </Card>
-      }>
-        <AuthForm />
-      </Suspense>
-    </div>
-  )
+      }
+    >
+      <AuthForm />
+    </Suspense>
+  );
 }

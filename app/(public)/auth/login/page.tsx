@@ -2,6 +2,7 @@
 
 import { signIn } from "@/actions/auth";
 import { ReferrerCheck } from "@/components/auth/referrer-check";
+import { Loading } from "@/components/loading";
 import { PasswordInput } from "@/components/password-input";
 import { Button } from "@/components/ui/button";
 import {
@@ -143,21 +144,7 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <Suspense
-      fallback={
-        <Card className="w-full max-w-md p-8">
-          <div className="space-y-4">
-            <div className="h-10 w-3/4 animate-pulse rounded bg-gray-200"></div>
-            <div className="h-4 w-1/2 animate-pulse rounded bg-gray-200"></div>
-            <div className="space-y-2 pt-4">
-              <div className="h-10 w-full animate-pulse rounded bg-gray-200"></div>
-              <div className="h-10 w-full animate-pulse rounded bg-gray-200"></div>
-              <div className="h-10 w-full animate-pulse rounded bg-gray-200"></div>
-            </div>
-          </div>
-        </Card>
-      }
-    >
+    <Suspense fallback={<Loading />}>
       <ReferrerCheck>
         <LoginForm />
       </ReferrerCheck>
