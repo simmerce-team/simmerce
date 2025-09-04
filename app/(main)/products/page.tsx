@@ -1,4 +1,5 @@
 import { fetchFeaturedProducts } from "@/actions/products";
+import { MobileHeader } from "@/components/header/mobile-header";
 import { Loading } from "@/components/loading";
 import { PageHeader } from "@/components/page-header";
 import { ProductCard } from "@/components/product/product-card";
@@ -21,6 +22,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
 
   return (
     <div className="min-h-screen bg-slate-50/30">
+      <MobileHeader isBack={true} title="All Products" />
       <PageHeader
         title={
           searchQuery ? `Search Results for "${searchQuery}"` : "All Products"

@@ -14,17 +14,10 @@ export default function AuthLayout({
           href="/"
           className="flex items-center gap-2 self-center font-medium"
         >
-          <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
-            <Image
-              className="bg-slate-800 rounded-lg shadow-sm"
-              src={Images.logo}
-              alt="Simmerce"
-              width={32}
-              height={32}
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            />
+          <div className="bg-primary text-primary-foreground flex size-8 items-center justify-center rounded-md">
+            <Image src={Images.logo} alt="Simmerce" width={48} height={48} />
           </div>
-          Simmerce
+          <span className="text-2xl font-bold">Simmerce</span>
         </Link>
         {children}
       </div>

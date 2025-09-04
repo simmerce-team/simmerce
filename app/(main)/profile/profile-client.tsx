@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -11,9 +10,10 @@ import {
 } from "@/components/ui/card";
 import { useAuth } from "@/context/AuthContext";
 import { format } from "date-fns";
-import { Calendar, Loader2, LogOut, Mail, Phone, User } from "lucide-react";
+import { Calendar, Loader2, Mail, Phone, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import SignOutButton from "./sign-out-button";
 
 const InfoItem = ({
   icon: Icon,
@@ -36,7 +36,7 @@ const InfoItem = ({
 );
 
 export default function ProfileClient() {
-  const { user, profile, isLoading, signOut } = useAuth();
+  const { user, profile, isLoading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -44,14 +44,6 @@ export default function ProfileClient() {
       router.push("/auth?redirect=/profile");
     }
   }, [user, isLoading, router]);
-
-  const handleSignOut = async () => {
-    try {
-      await signOut();
-    } catch (error) {
-      console.error("Error signing out:", error);
-    }
-  };
 
   if (isLoading || !user) {
     return (
@@ -91,14 +83,7 @@ export default function ProfileClient() {
 
       <CardFooter className="md:hidden flex items-center justify-between border-t bg-slate-50/5">
         <p className="text-sm text-slate-500">Click the button to sign out</p>
-        <Button
-          variant="destructive"
-          onClick={handleSignOut}
-          className="flex justify-center items-center gap-2"
-        >
-          <LogOut className="h-4 w-4" />
-          <span>Sign out</span>
-        </Button>
+        <SignOutButton/>
       </CardFooter>
     </Card>
   );

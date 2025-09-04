@@ -32,6 +32,7 @@ export default function RootLayout({
         <QueryClientProviders>
           <AuthProvider>
             {children}
+            {/* <MobileAppPromptWrapper /> */}
             <Toaster />
             <Analytics />
             <SpeedInsights />

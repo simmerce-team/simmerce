@@ -16,9 +16,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useAuth } from "@/context/AuthContext"
+import { Images } from "@/utils/constant"
 import { Loader2, LogOut, UserIcon } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 
 export default function NavUser() {
   const [isClient, setIsClient] = useState(false)
@@ -71,7 +73,10 @@ export default function NavUser() {
             size="sm"
             className="h-9 w-9 border-slate-200 p-0"
           >
-            <UserIcon className="h-4 w-4" />
+            <Avatar>
+              <AvatarImage src={profile?.avatar_url || Images.user} />
+              <AvatarFallback>{profile?.full_name?.[0] || 'User'}</AvatarFallback>
+            </Avatar>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">

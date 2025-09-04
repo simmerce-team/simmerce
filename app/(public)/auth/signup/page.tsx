@@ -97,7 +97,7 @@ function SignupForm() {
 
   return (
     <Card className="w-full max-w-md">
-      <CardHeader className="space-y-1">
+      <CardHeader>
         <CardTitle className="text-2xl font-bold">Create an account</CardTitle>
         <CardDescription>
           Enter your details to create a new account

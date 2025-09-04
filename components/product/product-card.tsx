@@ -1,7 +1,7 @@
 import { ProductItem } from "@/actions/products";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Images } from "@/utils/constant";
+import { isValidImageUrl } from "@/utils/constant";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -24,6 +24,8 @@ export function ProductCard({ product, className = "" }: ProductCardProps) {
     address,
   } = product;
 
+  const primaryImage = isValidImageUrl(image);
+
   const cardContent = (
     <Card
       className={`group overflow-hidden transition-all hover:shadow-md pt-0 ${className}`}
@@ -31,7 +33,7 @@ export function ProductCard({ product, className = "" }: ProductCardProps) {
       {/* Image Container - Fixed height to prevent oversized images */}
       <div className="relative h-48 bg-gradient-to-br from-slate-50 to-slate-100 overflow-hidden">
         <Image
-          src={image || Images.placeholder}
+          src={primaryImage}
           alt={name}
           fill
           className="object-cover group-hover:scale-105 transition-transform duration-300"

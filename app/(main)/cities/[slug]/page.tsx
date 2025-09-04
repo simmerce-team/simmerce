@@ -1,5 +1,6 @@
 import { FeaturedProductsByCity } from "@/components/cities/featured-products";
 import { OtherCitiesList } from "@/components/cities/other-cities";
+import { MobileHeader } from "@/components/header/mobile-header";
 import { CitiesSkeleton } from "@/components/home/cities_skeleton";
 import { ProductsSkeleton } from "@/components/home/products_skeleton";
 import { PageHeader } from "@/components/page-header";
@@ -18,14 +19,15 @@ export default async function CityPage({ params }: { params: Params }) {
     .join(" ");
 
   return (
-    <div className="container mx-auto px-4 md:py-8 max-w-7xl">
+    <div className="container mx-auto md:py-8 max-w-7xl">
+      <MobileHeader isBack={true} title={`Businesses in ${formattedCityName}`} />
       <PageHeader
         title={`Businesses in ${formattedCityName}`}
         description={`Discover suppliers, manufacturers, and wholesalers across ${formattedCityName}.`}
       />
 
       {/* Featured Products */}
-      <section className="md:my-16">
+      <section className="p-4 md:my-8">
         <div className="hidden md:flex justify-between items-center mb-8">
           <h2 className="text-base md:text-lg font-semibold text-slate-800 tracking-tight">
             Products in {formattedCityName}
@@ -43,7 +45,7 @@ export default async function CityPage({ params }: { params: Params }) {
       </section>
 
       {/* Other Cities */}
-      <section className="mb-12">
+      <section className="p-4">
         <h2 className="md:text-lg font-semibold text-slate-800 mb-8 tracking-tight">
           Explore Other Cities
         </h2>

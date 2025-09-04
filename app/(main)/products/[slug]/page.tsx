@@ -1,4 +1,5 @@
 import { getProductById } from "@/actions/product";
+import { MobileHeader } from "@/components/header/mobile-header";
 import { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
@@ -114,8 +115,9 @@ const ProductDetailPage = async ({ params }: { params: Params }) => {
 
   // const shareUrl = `${process.env.NEXT_PUBLIC_APP_URL}/products/${slug}`;
   return (
-    <div className="min-h-screen bg-slate-50/30 py-4 md:py-8">
-      <div className="container mx-auto px-4 max-w-7xl">
+    <div className="min-h-screen bg-slate-50/30">
+      <MobileHeader isBack title="Product" />
+      <div className="container mx-auto p-4 max-w-7xl">
         <script
           type="application/ld+json"
           suppressHydrationWarning
